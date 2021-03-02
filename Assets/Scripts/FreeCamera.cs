@@ -17,10 +17,12 @@ public class FreeCamera : MonoBehaviour
 
     float horizontalInput, verticalInput;
 
+    bool freeCursor = false;
+
+
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;               // Lock the cursor
-        Cursor.visible = false;                                 // Hide el cursor
+        updateCursor();
 
         rotationX = transform.localRotation.eulerAngles.x;      // Initial camera rotation 
         rotationY = transform.localRotation.eulerAngles.y;
@@ -29,11 +31,18 @@ public class FreeCamera : MonoBehaviour
 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        calculateCameraRotation();
-        calculateCameraMovement();
+        if(!freeCursor){
+            calculateCameraRotation();
+            calculateCameraMovement();
+        }
+
+        if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){     // Key P -> release the cursor
+            freeCursor = !freeCursor; 
+            updateCursor();
+        }
+
     }
 
     private void calculateCameraRotation(){
@@ -79,6 +88,16 @@ public class FreeCamera : MonoBehaviour
         movement = (movement.normalized * movementSpeed) * Time.deltaTime;
         
         rigidbody.MovePosition(transform.position + movement);  // Move 
+    }
+
+    private void updateCursor(){
+        if(freeCursor){
+            Cursor.lockState = CursorLockMode.None;         // Free the cursor
+            Cursor.visible = true;                          // Show el cursor
+        }else{
+            Cursor.lockState = CursorLockMode.Locked;       // Lock the cursor
+            Cursor.visible = false;                         // Hide el cursor
+        }
     }
 
 }
