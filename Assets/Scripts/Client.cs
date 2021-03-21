@@ -42,22 +42,24 @@ public class ReceivedMessage{
 
 public class Client : MonoBehaviour
 {
-    const string IP = "172.20.67.4";        // Server IP
-    const int PORT = 2323;                  // Server Port
+    private const string IP = "172.20.67.4";        // Server IP
+    private const int PORT = 2323;                  // Server Port
 
-    WebSocket webSocket;
+    private WebSocket webSocket;
 
-    string userName = "Kudry";
-    string userPassword = "myPassword";
-    string userToken = "";
+    private string userName, userPassword, userToken = "";   // User Credentials
+
+    private GameObject loginPanel; 
 
 
     void Start(){
+        loginPanel = GameObject.Find("LogInPanel");
+
         createConnection();
     }
 
 
-    public void createConnection(){
+    private void createConnection(){
         
         try{
 
@@ -65,7 +67,6 @@ public class Client : MonoBehaviour
 
             webSocket.OnOpen += () => {
                 Debug.Log("Conexión con el servidor establecida");
-                requestUserToken();       
             };
 
             webSocket.OnMessage += (byte[] data) => {
@@ -88,7 +89,7 @@ public class Client : MonoBehaviour
     }
 
 
-    public void processMessage(string messageString){
+    private void processMessage(string messageString){
         
         try {
             ReceivedMessage receivedMessage = JsonUtility.FromJson<ReceivedMessage>(messageString);
@@ -116,11 +117,14 @@ public class Client : MonoBehaviour
 
 
     public void requestUserToken(){
+        userName = GameObject.Find("UserName").GetComponent<InputField>().text;
+        userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
+
         RequestUserTokenCredentials requestUserToken = new RequestUserTokenCredentials(userName, userPassword);
         sendData("requestUserToken", JsonUtility.ToJson(requestUserToken));        
     }
 
-    public void handleRequestUserTokenResponse(string receivedToken){
+    private void handleRequestUserTokenResponse(string receivedToken){
 
         if(receivedToken != ""){
             userToken = receivedToken;
