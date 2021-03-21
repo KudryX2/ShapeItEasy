@@ -122,8 +122,8 @@ public class Client : MonoBehaviour
 
     public void handleRequestUserTokenResponse(string receivedToken){
 
-        if(receivedMessage.content != ""){
-            userToken = receivedMessage.content;
+        if(receivedToken != ""){
+            userToken = receivedToken;
             Debug.Log("Usuario autentificado correctamente");
         }else   
             Debug.Log("No se ha podido autentificar al usuario");
