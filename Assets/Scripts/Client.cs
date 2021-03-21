@@ -22,6 +22,18 @@ public class Request{
 }
 
 [Serializable]
+public class RequestUserTokenCredentials{
+    public string userName;
+    public string userPassword;
+
+    public RequestUserTokenCredentials(string userName, string userPassword){
+        this.userName = userName;
+        this.userPassword = userPassword;
+    }
+}
+
+
+[Serializable]
 public class ReceivedMessage{       
     public string kind;
     public string content;
@@ -35,7 +47,9 @@ public class Client : MonoBehaviour
 
     WebSocket webSocket;
 
-    string clientName = "Kudry";
+    string userName = "Kudry";
+    string userPassword = "myPassword";
+    string userToken = "";
 
 
     void Start(){
@@ -51,6 +65,7 @@ public class Client : MonoBehaviour
 
             webSocket.OnOpen += () => {
                 Debug.Log("Conexión con el servidor establecida");
+                requestUserToken();       
             };
 
             webSocket.OnMessage += (byte[] data) => {
@@ -75,10 +90,14 @@ public class Client : MonoBehaviour
 
     public void processMessage(string messageString){
         
-        Debug.Log(messageString);
-
         try {
             ReceivedMessage receivedMessage = JsonUtility.FromJson<ReceivedMessage>(messageString);
+
+            if(receivedMessage.kind == "tokenRequestCallback")
+                handleRequestUserTokenResponse(receivedMessage.content);
+                
+            else
+                Debug.Log("Tipo de mensaje desconocido " + messageString);
 
         } catch (Exception exception){
             Debug.Log("El mensaje recibido no esta en el formato JSON , mensaje : " + messageString);
@@ -86,13 +105,29 @@ public class Client : MonoBehaviour
     }
 
     public void sendData(String kind, String content){
-        Request request = new Request(kind, clientName, content);  
+        Request request = new Request(kind, userToken, content);  
         
         try{
             webSocket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(request)));
         }catch(Exception exception){
             Debug.Log("No se ha podido enviar el mensaje " + exception.ToString());
         }
+    }
+
+
+    public void requestUserToken(){
+        RequestUserTokenCredentials requestUserToken = new RequestUserTokenCredentials(userName, userPassword);
+        sendData("requestUserToken", JsonUtility.ToJson(requestUserToken));        
+    }
+
+    public void handleRequestUserTokenResponse(string receivedToken){
+
+        if(receivedMessage.content != ""){
+            userToken = receivedMessage.content;
+            Debug.Log("Usuario autentificado correctamente");
+        }else   
+            Debug.Log("No se ha podido autentificar al usuario");
+
     }
 
 }
