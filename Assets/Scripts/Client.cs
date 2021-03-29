@@ -1,5 +1,7 @@
 ﻿
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Text;
 using UnityEngine.UI;
@@ -22,38 +24,25 @@ public class Request{
 }
 
 [Serializable]
-public class RequestUserTokenCredentials{
-    public string userName;
-    public string userPassword;
-
-    public RequestUserTokenCredentials(string userName, string userPassword){
-        this.userName = userName;
-        this.userPassword = userPassword;
-    }
-}
-
-
-[Serializable]
 public class ReceivedMessage{       
     public string kind;
     public string content;
 }
 
-
 public class Client : MonoBehaviour
 {
-    private const string IP = "172.20.67.4";        // Server IP
+    private const string IP = "172.20.67.28";       // Server IP
     private const int PORT = 2323;                  // Server Port
 
     private WebSocket webSocket;
 
-    private string userName, userPassword, userToken = "";   // User Credentials
-
-    private GameObject loginPanel; 
+    Session sessionManager;
+    Scenes scenesManager;
 
 
     void Start(){
-        loginPanel = GameObject.Find("LogInPanel");
+        sessionManager = GetComponent<Session>();
+        scenesManager = GetComponent<Scenes>();
 
         createConnection();
     }
@@ -90,24 +79,36 @@ public class Client : MonoBehaviour
 
 
     private void processMessage(string messageString){
-        
+
+        ReceivedMessage receivedMessage = null;
+        bool parsedOK = false;
+
         try {
-            ReceivedMessage receivedMessage = JsonUtility.FromJson<ReceivedMessage>(messageString);
-
-            if(receivedMessage.kind == "tokenRequestCallback")
-                handleRequestUserTokenResponse(receivedMessage.content);
-                
-            else
-                Debug.Log("Tipo de mensaje desconocido " + messageString);
-
+            receivedMessage = JsonUtility.FromJson<ReceivedMessage>(messageString);
+            parsedOK = true;
         } catch (Exception exception){
             Debug.Log("El mensaje recibido no esta en el formato JSON , mensaje : " + messageString);
         }
+
+        if(parsedOK)
+            if(receivedMessage.kind == "tokenCallback")
+                sessionManager.handleUserTokenResponse(receivedMessage.content);
+                
+            else if(receivedMessage.kind == "createSceneCallback")
+                scenesManager.handleCreateSceneResponse(receivedMessage.content);
+          
+            else if(receivedMessage.kind == "scenesListCallback")
+                scenesManager.handleScenesListResponse(receivedMessage.content);
+
+            else
+                Debug.Log("Tipo de mensaje desconocido " + messageString);
+
     }
 
     public void sendData(String kind, String content){
-        Request request = new Request(kind, userToken, content);  
-        
+
+        Request request = new Request(kind, sessionManager.getUserToken(), content);  
+
         try{
             webSocket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(request)));
         }catch(Exception exception){
@@ -115,23 +116,7 @@ public class Client : MonoBehaviour
         }
     }
 
+    
 
-    public void requestUserToken(){
-        userName = GameObject.Find("UserName").GetComponent<InputField>().text;
-        userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
-
-        RequestUserTokenCredentials requestUserToken = new RequestUserTokenCredentials(userName, userPassword);
-        sendData("requestUserToken", JsonUtility.ToJson(requestUserToken));        
-    }
-
-    private void handleRequestUserTokenResponse(string receivedToken){
-
-        if(receivedToken != ""){
-            userToken = receivedToken;
-            Debug.Log("Usuario autentificado correctamente");
-        }else   
-            Debug.Log("No se ha podido autentificar al usuario");
-
-    }
-
+    
 }
