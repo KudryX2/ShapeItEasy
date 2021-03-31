@@ -10,7 +10,19 @@ using HybridWebSocket;
 
 [Serializable]
 public class Scene{
+    public string id;
     public string name;
+}
+
+[Serializable]
+public class EditSceneRequest{
+    public string id;
+    public string newName;
+
+    public EditSceneRequest(string id, string newName){
+        this.id = id;
+        this.newName = newName;
+    }
 }
 
 
@@ -18,38 +30,35 @@ public class Scenes : MonoBehaviour
 {
     Client client;
 
-    List<Scene> scenesList = new List<Scene>();
+    Canvas scenesListCanvas, newSceneCanvas, editSceneCanvas;               // Canvas
+    bool showScenesListCanvas, showNewSceneCanvas, showEditSceneCanvas;
 
-    private GameObject scenesPanel, createScenePanel; 
+    InputField newSceneNameInput, editSceneNameInput;
+    bool clearNewSceneNameInputField, clearEditSceneNameInputField;
 
-    
-    private Canvas scenesListCanvas, newSceneCanvas;
-    private bool showScenesListCanvas, showNewSceneCanvas;
-
-    InputField newSceneNameInput;
-    private bool clearNewSceneNameInputField;
-
-    GameObject scenesListContainer;
-    private bool updateScenesContainer;
-
+    List<Scene> scenesList = new List<Scene>();         // Scenes list
     GameObject scenesListScroll;
+    public GameObject scenesListItem;
+    GameObject scenesListContainer;                 
+    bool updateScenesContainer;
+
+    Scene editedScene;
 
 
     void Start()
     {
         client = GetComponent<Client>();
 
-        scenesListCanvas = GameObject.Find("ScenesListCanvas").GetComponent<Canvas>();
+        scenesListCanvas = GameObject.Find("ScenesCanvas").GetComponent<Canvas>();
         newSceneCanvas = GameObject.Find("NewSceneCanvas").GetComponent<Canvas>();
+        editSceneCanvas = GameObject.Find("EditSceneCanvas").GetComponent<Canvas>();
 
         scenesListCanvas.enabled = false;
         newSceneCanvas.enabled = false;
-        
+        editSceneCanvas.enabled = false;
 
-        newSceneNameInput = GameObject.Find("SceneNameField").GetComponent<InputField>();
-
-        scenesPanel = GameObject.Find("ScenesPanel");
-        createScenePanel = GameObject.Find("CreateScenePanel");
+        newSceneNameInput = GameObject.Find("NewSceneNameField").GetComponent<InputField>();
+        editSceneNameInput = GameObject.Find("EditSceneNameField").GetComponent<InputField>();
 
         scenesListContainer = GameObject.Find("Content");
 
@@ -62,10 +71,16 @@ public class Scenes : MonoBehaviour
 
         scenesListCanvas.enabled = showScenesListCanvas;
         newSceneCanvas.enabled = showNewSceneCanvas;
+        editSceneCanvas.enabled = showEditSceneCanvas;
 
         if(clearNewSceneNameInputField){
             newSceneNameInput.text = "";
             clearNewSceneNameInputField = false;
+        }
+
+        if(clearEditSceneNameInputField){
+            editSceneNameInput.text = "";
+            clearEditSceneNameInputField = false;
         }
 
         if(updateScenesContainer)
@@ -74,7 +89,7 @@ public class Scenes : MonoBehaviour
     }
 
     /*
-        Create scene request and response handler
+        Create, Edit and Delete scene requests and response handler
     */
     public void requestCreateScene(){
 
@@ -87,17 +102,39 @@ public class Scenes : MonoBehaviour
 
     }
 
-    public void handleCreateSceneResponse(string response){
+    public void requestEditScene(){
+
+        string sceneName = editSceneNameInput.text;
+
+        if(sceneName != null)
+            client.sendData("requestEditScene",  JsonUtility.ToJson( new EditSceneRequest("id", sceneName)));
+        else   
+            Debug.Log("El nombre de la escena no puede estar vacío");
+
+    }
+
+    public void requestDeleteScene(){
+
+        // TODO Obtener el id de la escena
+
+        client.sendData("requestDeleteScene", "sceneID");
+    }
+
+    public void handleScenesModificationResponse(string response){
 
         if(response == "OK"){
+
+            Debug.Log("Modificación en las escenas exitosa");
+
             showScenesListCanvas = true;
             showNewSceneCanvas = false;
+            showEditSceneCanvas = false;
         
             clearNewSceneNameInputField = true;
+            clearEditSceneNameInputField = true;
             requestScenesList();
         }
     }
-
 
     /*
         Scenes list request and response handler
@@ -146,33 +183,22 @@ public class Scenes : MonoBehaviour
 
     private void reloadScenesContainer(){
 
-        foreach(Transform transform in scenesListContainer.transform){
+        foreach(Transform transform in scenesListContainer.transform)                                               // Clear the list container
             GameObject.Destroy(transform.gameObject);
-        }
 
-        scenesListContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(0, scenesList.Count * 40);
+        scenesListContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(0, scenesList.Count * 41);        // Resize slider container
 
-        int y = -25 ;
-        int x = (int)scenesListScroll.GetComponent<RectTransform>().rect.width / 2; 
+        int x = (int)scenesListScroll.GetComponent<RectTransform>().rect.width / 2;                             
+        int y = -25 ;                                                                                               // Starting position for elements at y axis
 
         foreach(Scene scene in scenesList){
-            Debug.Log(scene.name);
 
-            GameObject listItem = GameObject.Instantiate(GameObject.Find("ListItem"));
-            listItem.GetComponent<Image>().enabled = true;
+            GameObject listItem = GameObject.Instantiate(scenesListItem);                                           // Instantiate a list item
+            listItem.transform.SetParent(scenesListContainer.transform);                                            // Set listContainer as parent
 
-            listItem.transform.GetChild(0).GetComponent<Text>().text = scene.name;
+            listItem.transform.GetChild(0).GetComponent<Text>().text = scene.name;                                  // Change list item text
 
-            RectTransform transform = listItem.GetComponent<RectTransform>();
-
-            transform.anchorMin = new Vector2(0.5f, 0.5f);
-            transform.anchorMax = new Vector2(0.5f, 0.5f);
-            transform.pivot = new Vector2(0.5f, 0.5f);
-
-
-            listItem.transform.SetParent(scenesListContainer.transform);
-
-            listItem.GetComponent<RectTransform>().localPosition = new Vector3(x, y, 0);                     
+            listItem.GetComponent<RectTransform>().localPosition = new Vector3(x, y, 0);                            // Change the position
             y -= 40;
         }
 
@@ -188,7 +214,15 @@ public class Scenes : MonoBehaviour
         showScenesListCanvas = visibility;
     }
 
-    public void makeCreateScenePanelVisible(){
+    public void makeEditSceneCanvasVisible(string sceneName){
+
+        editSceneNameInput.text = sceneName;
+
+        showScenesListCanvas = false;
+        showEditSceneCanvas = true;
+    }
+
+    public void makeCreateSceneCanvasVisible(){
         showScenesListCanvas = false;
         showNewSceneCanvas = true;
     }
@@ -196,7 +230,9 @@ public class Scenes : MonoBehaviour
     public void cancellButton(){
         showScenesListCanvas = true;
         showNewSceneCanvas = false;
+        showEditSceneCanvas = false;
 
         clearNewSceneNameInputField = true;
     }
+
 }

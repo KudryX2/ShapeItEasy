@@ -94,8 +94,8 @@ public class Client : MonoBehaviour
             if(receivedMessage.kind == "tokenCallback")
                 sessionManager.handleUserTokenResponse(receivedMessage.content);
                 
-            else if(receivedMessage.kind == "createSceneCallback")
-                scenesManager.handleCreateSceneResponse(receivedMessage.content);
+            else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
+                scenesManager.handleScenesModificationResponse(receivedMessage.content);
           
             else if(receivedMessage.kind == "scenesListCallback")
                 scenesManager.handleScenesListResponse(receivedMessage.content);
