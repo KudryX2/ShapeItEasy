@@ -91,7 +91,7 @@ public class Client : MonoBehaviour
         }
 
         if(parsedOK)
-            if(receivedMessage.kind == "tokenCallback")
+            if(receivedMessage.kind == "logInCallback")
                 sessionManager.handleLogInResponse(receivedMessage.content);
                 
             else if(receivedMessage.kind == "signInCallback")
