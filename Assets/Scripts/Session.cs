@@ -42,6 +42,7 @@ public class Session : MonoBehaviour
     Scenes scenesManager;
     Client client;
 
+
     void Start()
     {
         loginCanvas = GameObject.Find("LoginCanvas").GetComponent<Canvas>();
@@ -60,7 +61,9 @@ public class Session : MonoBehaviour
         signInCanvas.enabled = showSignInCanvas;
     }
 
-    
+    /*
+        Log In Request and response handler
+    */
     public void logIn(){
         userName = GameObject.Find("UserName").GetComponent<InputField>().text;
         userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
@@ -71,7 +74,7 @@ public class Session : MonoBehaviour
     }
 
 
-    public void handleUserTokenResponse(string receivedToken){
+    public void handleLogInResponse(string receivedToken){
 
         if(receivedToken != ""){                                    // Successful connection
             Debug.Log("Usuario autentificado correctamente");
@@ -87,17 +90,6 @@ public class Session : MonoBehaviour
 
     }
 
-
-
-    public void makeSignInCanvasVisible(){
-        showSignInCanvas = true; 
-        showLoginCanvas = false;
-    }
-
-    public void cancelButton(){
-        showSignInCanvas = false; 
-        showLoginCanvas = true;
-    }
 
     /*
         Sign In Request and response Handler
@@ -144,10 +136,24 @@ public class Session : MonoBehaviour
 
 
     /*
+        UI Methods
+    */
+    public void makeSignInCanvasVisible(){
+        showSignInCanvas = true; 
+        showLoginCanvas = false;
+    }
+
+    public void cancelButton(){
+        showSignInCanvas = false; 
+        showLoginCanvas = true;
+    }
+
+
+    /*
         Getters
     */
     public string getUserToken(){
         return userToken;
     }
-    
+
 }
