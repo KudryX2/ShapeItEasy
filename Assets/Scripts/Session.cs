@@ -10,11 +10,11 @@ using HybridWebSocket;
 
 [Serializable]
 public class UserCredentials{
-    public string userName;
+    public string userEmail;
     public string userPassword;
 
-    public UserCredentials(string userName, string userPassword){
-        this.userName = userName;
+    public UserCredentials(string userEmail, string userPassword){
+        this.userEmail = userEmail;
         this.userPassword = userPassword;
     }
 }
@@ -65,12 +65,12 @@ public class Session : MonoBehaviour
         Log In Request and response handler
     */
     public void logIn(){
-        userName = GameObject.Find("UserName").GetComponent<InputField>().text;
+        userEmail = GameObject.Find("UserEmail").GetComponent<InputField>().text;
         userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
 
-        UserCredentials requestUserToken = new UserCredentials(userName, userPassword);
+        UserCredentials requestUserToken = new UserCredentials(userEmail, userPassword);
         
-        client.sendData("requestUserToken", JsonUtility.ToJson(requestUserToken));        
+        client.sendData("logInRequest", JsonUtility.ToJson(requestUserToken));        
     }
 
 
@@ -96,9 +96,9 @@ public class Session : MonoBehaviour
     */
     public void signIn(){
 
-        userName = GameObject.Find("UserName").GetComponent<InputField>().text;
-        userEmail = GameObject.Find("Email").GetComponent<InputField>().text;
-        userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
+        userName = GameObject.Find("newUserName").GetComponent<InputField>().text;
+        userEmail = GameObject.Find("newUserEmail").GetComponent<InputField>().text;
+        userPassword = GameObject.Find("newUserPassword").GetComponent<InputField>().text;
         string userRepeatedPassword = GameObject.Find("RepeatUserPassword").GetComponent<InputField>().text;
 
         // TODO comprobar los campos y que no contengan carácteres no válidos
@@ -108,7 +108,7 @@ public class Session : MonoBehaviour
             client.sendData("signInRequest", JsonUtility.ToJson(signInRequest));
         }
         else{
-            GameObject.Find("UserPassword").GetComponent<InputField>().text = "";           // Clear password fields if not match
+            GameObject.Find("newUserPassword").GetComponent<InputField>().text = "";           // Clear password fields if not match
             GameObject.Find("RepeatUserPassword").GetComponent<InputField>().text = "";
         }
         
@@ -116,6 +116,8 @@ public class Session : MonoBehaviour
 
     public void handleSignInResponse(string response){
         
+        Debug.Log(response);
+
         // TODO procesar la respuesta
         if(true){
             // TODO si la respuesta es favorable contendrá un token asi que lo guardamos

@@ -725,7 +725,7 @@ GameObject:
   - component: {fileID: 134054952}
   - component: {fileID: 134054951}
   m_Layer: 5
-  m_Name: UserPassword
+  m_Name: newUserPassword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2462,7 +2462,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Name
+  m_Text: Email
 --- !u!222 &679732658
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4524,7 +4524,7 @@ GameObject:
   - component: {fileID: 1485612736}
   - component: {fileID: 1485612735}
   m_Layer: 5
-  m_Name: UserName
+  m_Name: UserEmail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5122,7 +5122,7 @@ GameObject:
   - component: {fileID: 1558670758}
   - component: {fileID: 1558670757}
   m_Layer: 5
-  m_Name: UserName
+  m_Name: newUserName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5961,7 +5961,7 @@ GameObject:
   - component: {fileID: 1946119181}
   - component: {fileID: 1946119180}
   m_Layer: 5
-  m_Name: Email
+  m_Name: newUserEmail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
