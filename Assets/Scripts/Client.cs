@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -31,7 +30,7 @@ public class ReceivedMessage{
 
 public class Client : MonoBehaviour
 {
-    private const string IP = "172.20.67.28";       // Server IP
+    private const string IP = "172.20.66.178";       // Server IP
     private const int PORT = 2323;                  // Server Port
 
     private WebSocket webSocket;
@@ -91,9 +90,12 @@ public class Client : MonoBehaviour
         }
 
         if(parsedOK)
-            if(receivedMessage.kind == "tokenCallback")
-                sessionManager.handleUserTokenResponse(receivedMessage.content);
+            if(receivedMessage.kind == "logInCallback")
+                sessionManager.handleLogInResponse(receivedMessage.content);
                 
+            else if(receivedMessage.kind == "signInCallback")
+                sessionManager.handleSignInResponse(receivedMessage.content);
+
             else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
                 scenesManager.handleScenesModificationResponse(receivedMessage.content);
           
