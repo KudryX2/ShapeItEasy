@@ -10,24 +10,29 @@ using HybridWebSocket;
 
 [Serializable]
 public class UserCredentials{
-    public string userEmail;
-    public string userPassword;
+    public string email;
+    public string password;
 
-    public UserCredentials(string userEmail, string userPassword){
-        this.userEmail = userEmail;
-        this.userPassword = userPassword;
+    public UserCredentials(string email, string password){
+        this.email = email;
+        this.password = password;
     }
 }
 
 [Serializable]
 public class SignInRequest{
-    public string userName, userEmail, userPassword;
+    public string name, email, password;
 
-    public SignInRequest(string userName, string userEmail, string userPassword){
-        this.userName = userName;
-        this.userEmail = userEmail;
-        this.userPassword = userPassword;
+    public SignInRequest(string name, string email, string password){
+        this.name = name;
+        this.email = email;
+        this.password = password;
     }
+}
+
+[Serializable]
+public class SignInResponse{
+    public string result, message;
 }
 
 
@@ -69,7 +74,6 @@ public class Session : MonoBehaviour
         userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
 
         UserCredentials requestUserToken = new UserCredentials(userEmail, userPassword);
-        
         client.sendData("logInRequest", JsonUtility.ToJson(requestUserToken));        
     }
 
@@ -101,8 +105,6 @@ public class Session : MonoBehaviour
         userPassword = GameObject.Find("newUserPassword").GetComponent<InputField>().text;
         string userRepeatedPassword = GameObject.Find("RepeatUserPassword").GetComponent<InputField>().text;
 
-        // TODO comprobar los campos y que no contengan carácteres no válidos
-
         if(String.Compare(userPassword, userRepeatedPassword) == 0){                        // Check if the passwords match
             SignInRequest signInRequest = new SignInRequest(userName, userEmail, userPassword);
             client.sendData("signInRequest", JsonUtility.ToJson(signInRequest));
@@ -110,26 +112,27 @@ public class Session : MonoBehaviour
         else{
             GameObject.Find("newUserPassword").GetComponent<InputField>().text = "";           // Clear password fields if not match
             GameObject.Find("RepeatUserPassword").GetComponent<InputField>().text = "";
+            Debug.Log("Contraseñas no coinciden");
         }
         
     }
 
     public void handleSignInResponse(string response){
         
-        Debug.Log(response);
+        SignInResponse signInResponse = JsonUtility.FromJson<SignInResponse>(response);
 
-        // TODO procesar la respuesta
-        if(true){
-            // TODO si la respuesta es favorable contendrá un token asi que lo guardamos
-
+        if(signInResponse.result == "success"){
+            userToken = signInResponse.message;
+        
             showSignInCanvas = false;                           // Hide SignInCanvas
 
             scenesManager.setScenesListCanvasVisibility(true);  // Show scenes panel
             scenesManager.requestScenesList();                  // Request scenes list
+        
         }else{
-            
-            // TODO dependiendo de la respuesta limpiar los campos afectados
 
+            Debug.Log(signInResponse.message);
+            // TODO dependiendo de la respuesta limpiar los campos afectados
 
         }
 
