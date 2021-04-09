@@ -30,7 +30,7 @@ public class ReceivedMessage{
 
 public class Client : MonoBehaviour
 {
-    private const string IP = "172.20.66.178";       // Server IP
+    private const string IP = "172.20.66.141";       // Server IP
     private const int PORT = 2323;                  // Server Port
 
     private WebSocket webSocket;

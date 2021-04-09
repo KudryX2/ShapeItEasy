@@ -42,7 +42,7 @@ public class Scenes : MonoBehaviour
     GameObject scenesListContainer;                 
     bool updateScenesContainer;
 
-    Scene editedScene;
+    string selectedSceneID;
 
 
     void Start()
@@ -107,17 +107,14 @@ public class Scenes : MonoBehaviour
         string sceneName = editSceneNameInput.text;
 
         if(sceneName != null)
-            client.sendData("requestEditScene",  JsonUtility.ToJson( new EditSceneRequest("id", sceneName)));
+            client.sendData("requestEditScene",  JsonUtility.ToJson( new EditSceneRequest(selectedSceneID, sceneName)));
         else   
             Debug.Log("El nombre de la escena no puede estar vacío");
 
     }
 
     public void requestDeleteScene(){
-
-        // TODO Obtener el id de la escena
-
-        client.sendData("requestDeleteScene", "sceneID");
+        client.sendData("requestDeleteScene", selectedSceneID);
     }
 
     public void handleScenesModificationResponse(string response){
@@ -206,6 +203,15 @@ public class Scenes : MonoBehaviour
 
     }
 
+    private string getSceneID(string sceneName){
+        
+        foreach(Scene scene in scenesList)
+            if(String.Compare(scene.name, sceneName ) == 0)
+                return scene.id;
+
+        return null;
+    }
+
 
     /*
         UI functions
@@ -217,6 +223,7 @@ public class Scenes : MonoBehaviour
     public void makeEditSceneCanvasVisible(string sceneName){
 
         editSceneNameInput.text = sceneName;
+        selectedSceneID = getSceneID(sceneName);
 
         showScenesListCanvas = false;
         showEditSceneCanvas = true;
