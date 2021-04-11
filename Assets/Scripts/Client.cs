@@ -96,6 +96,9 @@ public class Client : MonoBehaviour
             else if(receivedMessage.kind == "signInCallback")
                 sessionManager.handleSignInResponse(receivedMessage.content);
 
+            else if(receivedMessage.kind == "logOutCallback")
+                sessionManager.handleLogOutResponse(receivedMessage.content);
+
             else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
                 scenesManager.handleScenesModificationResponse(receivedMessage.content);
           
