@@ -141,6 +141,23 @@ public class Session : MonoBehaviour
 
 
     /*
+        Log out Request and response handler
+    */
+    public void logOut(){
+        client.sendData("logOutRequest", " ");
+    }
+
+    public void handleLogOutResponse(string response){
+
+        if(response == "OK"){
+            userToken = "";                                     // Clear the actual token
+            showLoginCanvas = true;                             // Show Log In canvas
+            scenesManager.setScenesListCanvasVisibility(false); // Hide scenes list canvas
+        }
+    }
+
+
+    /*
         UI Methods
     */
     public void makeSignInCanvasVisible(){
