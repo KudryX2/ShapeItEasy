@@ -271,7 +271,7 @@ public class Scenes : MonoBehaviour
 
     private void loadUnityScene(){
         try{
-            SceneManager.LoadScene("Scene", LoadSceneMode.Single);
+            SceneManager.LoadScene("EditScene", LoadSceneMode.Single);
         }catch(Exception exception){
             Debug.Log("Error cambiando de escena " + exception);
         }

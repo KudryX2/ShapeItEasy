@@ -84,11 +84,11 @@ public class Client : ScriptableObject
             receivedMessage = JsonUtility.FromJson<ReceivedMessage>(messageString);
             parsedOK = true;
         } catch (Exception exception){
-            Debug.Log("El mensaje recibido no esta en el formato JSON , mensaje : " + messageString);
+            Debug.Log("El mensaje recibido no esta en el formato JSON , mensaje : " + messageString + " error " + exception);
         }
 
         if(parsedOK)
-            if(receivedMessage.kind == "logInCallback")
+            if(receivedMessage.kind == "logInCallback")                     // Session Callbacks
                 Session.handleLogInResponse(receivedMessage.content);
                 
             else if(receivedMessage.kind == "signInCallback")
@@ -97,14 +97,14 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "logOutCallback")
                 Session.handleLogOutResponse(receivedMessage.content);
 
+            else if(receivedMessage.kind == "connectCallback")              // Scenes managment Callbacks
+                scenesManager.handleConnectResponse(receivedMessage.content);
+            
             else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
                 scenesManager.handleScenesModificationResponse(receivedMessage.content);
           
             else if(receivedMessage.kind == "scenesListCallback")
                 scenesManager.handleScenesListResponse(receivedMessage.content);
-
-            else if(receivedMessage.kind == "connectCallback")
-                scenesManager.handleConnectResponse(receivedMessage.content);
 
             else
                 Debug.Log("Tipo de mensaje desconocido " + messageString);
