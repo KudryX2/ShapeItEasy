@@ -35,12 +35,12 @@ public class Client : MonoBehaviour
 
     private WebSocket webSocket;
 
-    Session sessionManager;
+//    Session sessionManager;
     Scenes scenesManager;
 
 
     void Start(){
-        sessionManager = GetComponent<Session>();
+    //    sessionManager = GetComponent<Session>();
         scenesManager = GetComponent<Scenes>();
 
         createConnection();
@@ -91,13 +91,13 @@ public class Client : MonoBehaviour
 
         if(parsedOK)
             if(receivedMessage.kind == "logInCallback")
-                sessionManager.handleLogInResponse(receivedMessage.content);
+                Session.handleLogInResponse(receivedMessage.content);
                 
             else if(receivedMessage.kind == "signInCallback")
-                sessionManager.handleSignInResponse(receivedMessage.content);
+                Session.handleSignInResponse(receivedMessage.content);
 
             else if(receivedMessage.kind == "logOutCallback")
-                sessionManager.handleLogOutResponse(receivedMessage.content);
+                Session.handleLogOutResponse(receivedMessage.content);
 
             else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
                 scenesManager.handleScenesModificationResponse(receivedMessage.content);
@@ -115,13 +115,14 @@ public class Client : MonoBehaviour
 
     public void sendData(String kind, String content){
 
-        Request request = new Request(kind, sessionManager.getUserToken(), content);  
+        Request request = new Request(kind, Session.getUserToken(), content);  
 
         try{
             webSocket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(request)));
         }catch(Exception exception){
             Debug.Log("No se ha podido enviar el mensaje " + exception.ToString());
         }
+
     }
 
     
