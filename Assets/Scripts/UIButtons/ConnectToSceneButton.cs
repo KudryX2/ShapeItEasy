@@ -11,6 +11,6 @@ using UnityEngine.EventSystems; // Event data.
 public class ConnectToSceneButton : MonoBehaviour, IPointerDownHandler{
 
     public void OnPointerDown (PointerEventData eventData){
-        GameObject.Find("Client").GetComponent<Scenes>().requestConnect(transform.parent.GetChild(0).GetComponent<Text>().text);  // Scene name
+        GameObject.Find("StartSceneManager").GetComponent<Scenes>().requestConnect(transform.parent.GetChild(0).GetComponent<Text>().text);  // Scene name
     }
 }

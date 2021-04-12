@@ -28,26 +28,24 @@ public class ReceivedMessage{
     public string content;
 }
 
-public class Client : MonoBehaviour
+public class Client : ScriptableObject
 {
-    private const string IP = "172.20.66.141";       // Server IP
-    private const int PORT = 2323;                  // Server Port
+    private static string IP = "172.20.66.141";       // Server IP
+    private static int PORT = 2323;                  // Server Port
 
-    private WebSocket webSocket;
+    private static WebSocket webSocket;
 
-//    Session sessionManager;
-    Scenes scenesManager;
+    static Scenes scenesManager;
 
 
-    void Start(){
-    //    sessionManager = GetComponent<Session>();
-        scenesManager = GetComponent<Scenes>();
+    public static void Start(){
+        scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
 
         createConnection();
     }
 
 
-    private void createConnection(){
+    private static void createConnection(){
         
         try{
 
@@ -77,7 +75,7 @@ public class Client : MonoBehaviour
     }
 
 
-    private void processMessage(string messageString){
+    private static void processMessage(string messageString){
 
         ReceivedMessage receivedMessage = null;
         bool parsedOK = false;
@@ -113,7 +111,7 @@ public class Client : MonoBehaviour
 
     }
 
-    public void sendData(String kind, String content){
+    public static void sendData(String kind, String content){
 
         Request request = new Request(kind, Session.getUserToken(), content);  
 

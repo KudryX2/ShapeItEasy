@@ -46,7 +46,6 @@ public class Session : ScriptableObject
     private static bool showLoginCanvas, showSignInCanvas;
  
     static Scenes scenesManager;
-    static Client client;
 
     static Button logInButton, logOutButton, signInButton, sendButton, cancelButton;    // Buttons
 
@@ -62,8 +61,7 @@ public class Session : ScriptableObject
         showSignInCanvas = false;
         showLoginCanvas = true;
 
-        scenesManager = GameObject.Find("Client").GetComponent<Scenes>();
-        client = GameObject.Find("Client").GetComponent<Client>();
+        scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
     
         /*
             Buttons click handlers
@@ -100,7 +98,7 @@ public class Session : ScriptableObject
         userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
 
         UserCredentials requestUserToken = new UserCredentials(userEmail, userPassword);
-        client.sendData("logInRequest", JsonUtility.ToJson(requestUserToken));        
+        Client.sendData("logInRequest", JsonUtility.ToJson(requestUserToken));        
     }
 
 
@@ -133,7 +131,7 @@ public class Session : ScriptableObject
 
         if(String.Compare(userPassword, userRepeatedPassword) == 0){                        // Check if the passwords match
             SignInRequest signInRequest = new SignInRequest(userName, userEmail, userPassword);
-            client.sendData("signInRequest", JsonUtility.ToJson(signInRequest));
+            Client.sendData("signInRequest", JsonUtility.ToJson(signInRequest));
         }
         else{
             GameObject.Find("newUserPassword").GetComponent<InputField>().text = "";           // Clear password fields if not match
@@ -170,7 +168,7 @@ public class Session : ScriptableObject
         Log out Request and response handler
     */
     public static void logOut(){
-        client.sendData("logOutRequest", " ");
+        Client.sendData("logOutRequest", " ");
     }
 
     public static void handleLogOutResponse(string response){
