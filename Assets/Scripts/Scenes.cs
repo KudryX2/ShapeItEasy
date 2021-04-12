@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 using HybridWebSocket;
 
@@ -43,6 +44,8 @@ public class Scenes : MonoBehaviour
     bool updateScenesContainer;
 
     string selectedSceneID;
+
+    bool loadScene;
 
 
     void Start()
@@ -85,6 +88,9 @@ public class Scenes : MonoBehaviour
 
         if(updateScenesContainer)
             reloadScenesContainer();
+
+        if(loadScene)
+            loadUnityScene();
 
     }
 
@@ -203,6 +209,26 @@ public class Scenes : MonoBehaviour
 
     }
 
+    /*
+        Connect to scene request and response handler
+    */
+    public void requestConnect(string sceneName){
+        selectedSceneID = getSceneID(sceneName);
+
+        if(selectedSceneID != null)
+            client.sendData("requestConnect", selectedSceneID);
+        else
+            Debug.Log("Ha ocurrido un error obteniendo el identificador de la escena");
+    }
+
+    public void handleConnectResponse(string response){
+
+        if(response == "OK")
+            loadScene = true;
+
+    }
+
+
     private string getSceneID(string sceneName){
         
         foreach(Scene scene in scenesList)
@@ -240,6 +266,15 @@ public class Scenes : MonoBehaviour
         showEditSceneCanvas = false;
 
         clearNewSceneNameInputField = true;
+    }
+
+
+    private void loadUnityScene(){
+        try{
+            SceneManager.LoadScene("Scene", LoadSceneMode.Single);
+        }catch(Exception exception){
+            Debug.Log("Error cambiando de escena " + exception);
+        }
     }
 
 }

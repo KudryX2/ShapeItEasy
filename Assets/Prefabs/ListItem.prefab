@@ -220,6 +220,7 @@ GameObject:
   - component: {fileID: 2378391703295700106}
   - component: {fileID: 2378391703295700109}
   - component: {fileID: 2378391703295700108}
+  - component: {fileID: 7455176122358104165}
   m_Layer: 5
   m_Name: ConnectButton
   m_TagString: Untagged
@@ -326,6 +327,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7455176122358104165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2378391703295700110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bddc360ac05cc4458dd9ead295e15ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2378391704134974543
 GameObject:
   m_ObjectHideFlags: 0

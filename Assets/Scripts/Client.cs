@@ -105,6 +105,9 @@ public class Client : MonoBehaviour
             else if(receivedMessage.kind == "scenesListCallback")
                 scenesManager.handleScenesListResponse(receivedMessage.content);
 
+            else if(receivedMessage.kind == "connectCallback")
+                scenesManager.handleConnectResponse(receivedMessage.content);
+
             else
                 Debug.Log("Tipo de mensaje desconocido " + messageString);
 
