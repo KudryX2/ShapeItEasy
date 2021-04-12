@@ -29,7 +29,7 @@ public class EditSceneRequest{
 
 public class Scenes : MonoBehaviour
 {
-    Client client;
+//    Client client;
 
     Canvas scenesListCanvas, newSceneCanvas, editSceneCanvas;               // Canvas
     bool showScenesListCanvas, showNewSceneCanvas, showEditSceneCanvas;
@@ -50,7 +50,7 @@ public class Scenes : MonoBehaviour
 
     void Start()
     {
-        client = GetComponent<Client>();
+  //      client = GetComponent<Client>();
 
         scenesListCanvas = GameObject.Find("ScenesCanvas").GetComponent<Canvas>();
         newSceneCanvas = GameObject.Find("NewSceneCanvas").GetComponent<Canvas>();
@@ -102,7 +102,7 @@ public class Scenes : MonoBehaviour
         string sceneName = newSceneNameInput.text;
 
         if(sceneName != "")
-            client.sendData("requestCreateScene", sceneName);
+            Client.sendData("requestCreateScene", sceneName);
         else
             Debug.Log("El nombre de la escena no puede estar vacío");
 
@@ -113,14 +113,14 @@ public class Scenes : MonoBehaviour
         string sceneName = editSceneNameInput.text;
 
         if(sceneName != null)
-            client.sendData("requestEditScene",  JsonUtility.ToJson( new EditSceneRequest(selectedSceneID, sceneName)));
+            Client.sendData("requestEditScene",  JsonUtility.ToJson( new EditSceneRequest(selectedSceneID, sceneName)));
         else   
             Debug.Log("El nombre de la escena no puede estar vacío");
 
     }
 
     public void requestDeleteScene(){
-        client.sendData("requestDeleteScene", selectedSceneID);
+        Client.sendData("requestDeleteScene", selectedSceneID);
     }
 
     public void handleScenesModificationResponse(string response){
@@ -143,7 +143,7 @@ public class Scenes : MonoBehaviour
         Scenes list request and response handler
     */
     public void requestScenesList(){
-        client.sendData("requestScenesList", " ");                   
+        Client.sendData("requestScenesList", " ");                   
     }
 
     public void handleScenesListResponse(string jsonArrayString){
@@ -216,7 +216,7 @@ public class Scenes : MonoBehaviour
         selectedSceneID = getSceneID(sceneName);
 
         if(selectedSceneID != null)
-            client.sendData("requestConnect", selectedSceneID);
+            Client.sendData("requestConnect", selectedSceneID);
         else
             Debug.Log("Ha ocurrido un error obteniendo el identificador de la escena");
     }

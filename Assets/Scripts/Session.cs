@@ -36,49 +36,73 @@ public class SignInResponse{
 }
 
 
-public class Session : MonoBehaviour
+public class Session : ScriptableObject
 {
 
-    private string userName, userEmail, userPassword, userToken = "";   // User Credentials
+    private static string userName, userEmail, userPassword, userToken = "";    // User Credentials
     
-    private Canvas loginCanvas, signInCanvas;
-    private bool showLoginCanvas, showSignInCanvas;
+    private static Canvas loginCanvas;                                          // Canvas 
+    private static Canvas signInCanvas;
+    private static bool showLoginCanvas, showSignInCanvas;
  
-    Scenes scenesManager;
-    Client client;
+    static Scenes scenesManager;
+
+    static Button logInButton, logOutButton, signInButton, sendButton, cancelButton;    // Buttons
 
 
-    void Start()
+    public static void Start()
     {
-        loginCanvas = GameObject.Find("LoginCanvas").GetComponent<Canvas>();
+        /*
+            Canvas 
+        */
+        loginCanvas =  GameObject.Find("LoginCanvas").GetComponent<Canvas>();
         signInCanvas = GameObject.Find("SignInCanvas").GetComponent<Canvas>();
 
         showSignInCanvas = false;
         showLoginCanvas = true;
 
-        scenesManager = GetComponent<Scenes>();
-        client = GetComponent<Client>();
+        scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
+    
+        /*
+            Buttons click handlers
+        */
+        logInButton = GameObject.Find("LogInButton").GetComponent<Button>();
+        logInButton.onClick.AddListener(() => Session.logIn());
+
+        logOutButton = GameObject.Find("LogOutButton").GetComponent<Button>();
+        logOutButton.onClick.AddListener(() => Session.logOut());
+
+        signInButton = GameObject.Find("SignInButton").GetComponent<Button>();
+        signInButton.onClick.AddListener(() => Session.makeSignInCanvasVisible());
+
+        sendButton = GameObject.Find("SendButton").GetComponent<Button>();
+        sendButton.onClick.AddListener(() => Session.signIn());
+
+        cancelButton = GameObject.Find("CancelButton").GetComponent<Button>();
+        cancelButton.onClick.AddListener(() => Session.cancelButtonAction());
     }
 
-    void Update()
+
+    public static void Update()
     {
         loginCanvas.enabled = showLoginCanvas;
         signInCanvas.enabled = showSignInCanvas;
     }
 
+
     /*
         Log In Request and response handler
     */
-    public void logIn(){
+    public static void logIn(){
         userEmail = GameObject.Find("UserEmail").GetComponent<InputField>().text;
         userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
 
         UserCredentials requestUserToken = new UserCredentials(userEmail, userPassword);
-        client.sendData("logInRequest", JsonUtility.ToJson(requestUserToken));        
+        Client.sendData("logInRequest", JsonUtility.ToJson(requestUserToken));        
     }
 
 
-    public void handleLogInResponse(string receivedToken){
+    public static void handleLogInResponse(string receivedToken){
 
         if(receivedToken != ""){                                    // Successful connection
             Debug.Log("Usuario autentificado correctamente");
@@ -98,7 +122,7 @@ public class Session : MonoBehaviour
     /*
         Sign In Request and response Handler
     */
-    public void signIn(){
+    public static void signIn(){
 
         userName = GameObject.Find("newUserName").GetComponent<InputField>().text;
         userEmail = GameObject.Find("newUserEmail").GetComponent<InputField>().text;
@@ -107,7 +131,7 @@ public class Session : MonoBehaviour
 
         if(String.Compare(userPassword, userRepeatedPassword) == 0){                        // Check if the passwords match
             SignInRequest signInRequest = new SignInRequest(userName, userEmail, userPassword);
-            client.sendData("signInRequest", JsonUtility.ToJson(signInRequest));
+            Client.sendData("signInRequest", JsonUtility.ToJson(signInRequest));
         }
         else{
             GameObject.Find("newUserPassword").GetComponent<InputField>().text = "";           // Clear password fields if not match
@@ -117,7 +141,7 @@ public class Session : MonoBehaviour
         
     }
 
-    public void handleSignInResponse(string response){
+    public static void handleSignInResponse(string response){
         
         SignInResponse signInResponse = JsonUtility.FromJson<SignInResponse>(response);
 
@@ -143,11 +167,11 @@ public class Session : MonoBehaviour
     /*
         Log out Request and response handler
     */
-    public void logOut(){
-        client.sendData("logOutRequest", " ");
+    public static void logOut(){
+        Client.sendData("logOutRequest", " ");
     }
 
-    public void handleLogOutResponse(string response){
+    public static void handleLogOutResponse(string response){
 
         if(response == "OK"){
             userToken = "";                                     // Clear the actual token
@@ -160,12 +184,12 @@ public class Session : MonoBehaviour
     /*
         UI Methods
     */
-    public void makeSignInCanvasVisible(){
+    public static void makeSignInCanvasVisible(){
         showSignInCanvas = true; 
         showLoginCanvas = false;
     }
 
-    public void cancelButton(){
+    public static void cancelButtonAction(){
         showSignInCanvas = false; 
         showLoginCanvas = true;
     }
@@ -174,7 +198,7 @@ public class Session : MonoBehaviour
     /*
         Getters
     */
-    public string getUserToken(){
+    public static string getUserToken(){
         return userToken;
     }
 

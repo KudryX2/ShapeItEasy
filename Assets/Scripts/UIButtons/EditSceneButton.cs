@@ -11,7 +11,7 @@ using UnityEngine.EventSystems; // Event data.
 public class EditSceneButton : MonoBehaviour, IPointerDownHandler{
     
     public void OnPointerDown (PointerEventData eventData){
-        GameObject.Find("Client").GetComponent<Scenes>().makeEditSceneCanvasVisible(transform.parent.GetChild(0).GetComponent<Text>().text);  // Scene name
+        GameObject.Find("StartSceneManager").GetComponent<Scenes>().makeEditSceneCanvasVisible(transform.parent.GetChild(0).GetComponent<Text>().text);  // Scene name
     }
 }
 
