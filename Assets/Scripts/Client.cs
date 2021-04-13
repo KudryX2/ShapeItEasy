@@ -37,11 +37,13 @@ public class Client : ScriptableObject
 
     static Scenes scenesManager;
 
-
     public static void Start(){
-        scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
 
-        createConnection();
+        if(webSocket == null){
+            scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
+
+            createConnection();
+        }
     }
 
 
@@ -100,6 +102,9 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "connectCallback")              // Scenes managment Callbacks
                 scenesManager.handleConnectResponse(receivedMessage.content);
             
+            else if(receivedMessage.kind == "disconnectCallback")
+                EditSceneManager.handleDisconnectSceneResponse(receivedMessage.content);
+
             else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
                 scenesManager.handleScenesModificationResponse(receivedMessage.content);
           

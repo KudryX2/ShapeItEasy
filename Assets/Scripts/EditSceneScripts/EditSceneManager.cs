@@ -1,18 +1,46 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System;
+using UnityEngine.UI;
 
-public class EditSceneManager : MonoBehaviour
+using UnityEngine.SceneManagement;
+
+
+public class EditSceneManager : ScriptableObject
 {
-    // Start is called before the first frame update
-    void Start()
-    {
+
+    static Button disconnectSceneButton;
+
+    static bool loadScene;
+
+    public static void Start(){
+        disconnectSceneButton = GameObject.Find("DisconnectSceneButton").GetComponent<Button>();
+        disconnectSceneButton.onClick.AddListener(() => EditSceneManager.requestDisconnect());
+    }
+
+    public static void Update(){
+
+        if(loadScene)
+            SceneManager.LoadScene("StartScene", LoadSceneMode.Single);
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public static void requestDisconnect(){
+        Client.sendData("requestDisconnect", " ");
     }
+
+    public static void handleDisconnectSceneResponse(string response){
+
+        try{
+            if(response == "OK"){
+                Session.setConnectedSceneID("");
+                loadScene = true;
+            }
+
+        }catch(Exception exception ){
+            Debug.Log("Error : " + exception);
+        }
+
+    }
+
+
 }

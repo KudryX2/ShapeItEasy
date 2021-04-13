@@ -29,8 +29,6 @@ public class EditSceneRequest{
 
 public class Scenes : MonoBehaviour
 {
-//    Client client;
-
     Canvas scenesListCanvas, newSceneCanvas, editSceneCanvas;               // Canvas
     bool showScenesListCanvas, showNewSceneCanvas, showEditSceneCanvas;
 
@@ -50,8 +48,6 @@ public class Scenes : MonoBehaviour
 
     void Start()
     {
-  //      client = GetComponent<Client>();
-
         scenesListCanvas = GameObject.Find("ScenesCanvas").GetComponent<Canvas>();
         newSceneCanvas = GameObject.Find("NewSceneCanvas").GetComponent<Canvas>();
         editSceneCanvas = GameObject.Find("EditSceneCanvas").GetComponent<Canvas>();
@@ -184,7 +180,7 @@ public class Scenes : MonoBehaviour
 
     }
 
-    private void reloadScenesContainer(){
+    private async void reloadScenesContainer(){
 
         foreach(Transform transform in scenesListContainer.transform)                                               // Clear the list container
             GameObject.Destroy(transform.gameObject);
@@ -223,8 +219,10 @@ public class Scenes : MonoBehaviour
 
     public void handleConnectResponse(string response){
 
-        if(response == "OK")
+        if(response == "OK"){
             loadScene = true;
+            Session.setConnectedSceneID(selectedSceneID);
+        }
 
     }
 

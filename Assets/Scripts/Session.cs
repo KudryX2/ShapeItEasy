@@ -39,9 +39,9 @@ public class SignInResponse{
 public class Session : ScriptableObject
 {
 
-    private static string userName, userEmail, userPassword, userToken = "";    // User Credentials
+    private static string connectedSceneID, userToken = "";                             // User Credentials
     
-    private static Canvas loginCanvas;                                          // Canvas 
+    private static Canvas loginCanvas;                                                  // Canvas 
     private static Canvas signInCanvas;
     private static bool showLoginCanvas, showSignInCanvas;
  
@@ -52,16 +52,24 @@ public class Session : ScriptableObject
 
     public static void Start()
     {
+        scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
+
         /*
             Canvas 
         */
         loginCanvas =  GameObject.Find("LoginCanvas").GetComponent<Canvas>();
         signInCanvas = GameObject.Find("SignInCanvas").GetComponent<Canvas>();
 
-        showSignInCanvas = false;
-        showLoginCanvas = true;
 
-        scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
+        if(userToken == ""){            // If user not logged in -> show log in canvas
+            showSignInCanvas = false;
+            showLoginCanvas = true;
+        }else{                          // If user logged in -> show scenes list
+            scenesManager.setScenesListCanvasVisibility(true);
+            scenesManager.requestScenesList();
+        }  
+
+
     
         /*
             Buttons click handlers
@@ -94,8 +102,8 @@ public class Session : ScriptableObject
         Log In Request and response handler
     */
     public static void logIn(){
-        userEmail = GameObject.Find("UserEmail").GetComponent<InputField>().text;
-        userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
+        string userEmail = GameObject.Find("UserEmail").GetComponent<InputField>().text;
+        string userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
 
         UserCredentials requestUserToken = new UserCredentials(userEmail, userPassword);
         Client.sendData("logInRequest", JsonUtility.ToJson(requestUserToken));        
@@ -124,9 +132,9 @@ public class Session : ScriptableObject
     */
     public static void signIn(){
 
-        userName = GameObject.Find("newUserName").GetComponent<InputField>().text;
-        userEmail = GameObject.Find("newUserEmail").GetComponent<InputField>().text;
-        userPassword = GameObject.Find("newUserPassword").GetComponent<InputField>().text;
+        string userName = GameObject.Find("newUserName").GetComponent<InputField>().text;
+        string userEmail = GameObject.Find("newUserEmail").GetComponent<InputField>().text;
+        string userPassword = GameObject.Find("newUserPassword").GetComponent<InputField>().text;
         string userRepeatedPassword = GameObject.Find("RepeatUserPassword").GetComponent<InputField>().text;
 
         if(String.Compare(userPassword, userRepeatedPassword) == 0){                        // Check if the passwords match
@@ -200,6 +208,14 @@ public class Session : ScriptableObject
     */
     public static string getUserToken(){
         return userToken;
+    }
+
+    public static void setConnectedSceneID(string newConnectedSceneID){
+        connectedSceneID = newConnectedSceneID;
+    }
+
+    public static string getConnectedSceneID(){
+        return connectedSceneID;
     }
 
 }
