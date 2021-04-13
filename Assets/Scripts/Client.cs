@@ -35,13 +35,11 @@ public class Client : ScriptableObject
 
     private static WebSocket webSocket;
 
-    static Scenes scenesManager;
-
-
     public static void Start(){
-        scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
 
-        createConnection();
+        if(webSocket == null){
+            createConnection();
+        }
     }
 
 
@@ -84,11 +82,11 @@ public class Client : ScriptableObject
             receivedMessage = JsonUtility.FromJson<ReceivedMessage>(messageString);
             parsedOK = true;
         } catch (Exception exception){
-            Debug.Log("El mensaje recibido no esta en el formato JSON , mensaje : " + messageString);
+            Debug.Log("El mensaje recibido no esta en el formato JSON , mensaje : " + messageString + " error " + exception);
         }
 
         if(parsedOK)
-            if(receivedMessage.kind == "logInCallback")
+            if(receivedMessage.kind == "logInCallback")                     // Session Callbacks
                 Session.handleLogInResponse(receivedMessage.content);
                 
             else if(receivedMessage.kind == "signInCallback")
@@ -97,14 +95,17 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "logOutCallback")
                 Session.handleLogOutResponse(receivedMessage.content);
 
+            else if(receivedMessage.kind == "connectCallback")              // Scenes managment Callbacks
+                Scenes.handleConnectResponse(receivedMessage.content);
+            
+            else if(receivedMessage.kind == "disconnectCallback")
+                EditSceneManager.handleDisconnectSceneResponse(receivedMessage.content);
+
             else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
-                scenesManager.handleScenesModificationResponse(receivedMessage.content);
+                Scenes.handleScenesModificationResponse(receivedMessage.content);
           
             else if(receivedMessage.kind == "scenesListCallback")
-                scenesManager.handleScenesListResponse(receivedMessage.content);
-
-            else if(receivedMessage.kind == "connectCallback")
-                scenesManager.handleConnectResponse(receivedMessage.content);
+                Scenes.handleScenesListResponse(receivedMessage.content);
 
             else
                 Debug.Log("Tipo de mensaje desconocido " + messageString);

@@ -283,7 +283,7 @@ GameObject:
   - component: {fileID: 46954249}
   - component: {fileID: 46954248}
   m_Layer: 5
-  m_Name: CancelButton
+  m_Name: CreateSceneCancelButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -351,18 +351,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 46954249}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 368212668}
-        m_MethodName: cancellButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &46954249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1599,18 +1588,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 365807103}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 368212668}
-        m_MethodName: makeCreateSceneCanvasVisible
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &365807103
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1656,7 +1634,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 368212665}
-  - component: {fileID: 368212668}
   - component: {fileID: 368212669}
   m_Layer: 0
   m_Name: StartSceneManager
@@ -1679,20 +1656,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &368212668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 368212664}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03ad38352faa27d4aa3d814a7e67213d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scenesListItem: {fileID: 2378391704443247084, guid: a52932f42252c0249807d0f3a3d9dc60,
-    type: 3}
 --- !u!114 &368212669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1705,6 +1668,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9d0b00d91655aa4c893c3a9140e86f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneListItem: {fileID: 2378391704443247084, guid: a52932f42252c0249807d0f3a3d9dc60,
+    type: 3}
 --- !u!1 &396434159
 GameObject:
   m_ObjectHideFlags: 0
@@ -1993,7 +1958,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 368212668}
+      - m_Target: {fileID: 0}
         m_MethodName: requestDeleteScene
         m_Mode: 1
         m_Arguments:
@@ -2471,7 +2436,7 @@ GameObject:
   - component: {fileID: 681135702}
   - component: {fileID: 681135701}
   m_Layer: 5
-  m_Name: CancelButton
+  m_Name: EditSceneCancelButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2540,7 +2505,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 368212668}
+      - m_Target: {fileID: 0}
         m_MethodName: cancellButton
         m_Mode: 1
         m_Arguments:
@@ -3195,7 +3160,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 368212668}
+      - m_Target: {fileID: 0}
         m_MethodName: requestEditScene
         m_Mode: 1
         m_Arguments:
@@ -3832,7 +3797,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 368212668}
+      - m_Target: {fileID: 0}
         m_MethodName: requestCreateScene
         m_Mode: 1
         m_Arguments:
@@ -5592,18 +5557,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1640525167}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1640525167
 MonoBehaviour:
   m_ObjectHideFlags: 0

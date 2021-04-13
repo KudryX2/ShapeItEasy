@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartSceneManager : MonoBehaviour
+using UnityEngine.EventSystems;
+
+public class Manager : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-        Client.Start();
-        Session.Start();
+        EditSceneManager.Start();   
     }
 
     // Update is called once per frame
     void Update()
     {
-        Session.Update();
+        EditSceneManager.Update();
     }
 }
