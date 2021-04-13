@@ -40,60 +40,24 @@ public class Session : ScriptableObject
 {
 
     private static string connectedSceneID, userToken = "";                             // User Credentials
-    
-    private static Canvas loginCanvas;                                                  // Canvas 
-    private static Canvas signInCanvas;
-    private static bool showLoginCanvas, showSignInCanvas;
- 
-    static Button logInButton, logOutButton, signInButton, sendButton, cancelButton;    // Buttons
+    static Button logOutButton;    // Buttons
 
 
     public static void Start()
     {
-        /*
-            Canvas 
-        */
-        loginCanvas =  GameObject.Find("LoginCanvas").GetComponent<Canvas>();
-        signInCanvas = GameObject.Find("SignInCanvas").GetComponent<Canvas>();
-
 
         if(userToken == ""){            // If user not logged in -> show log in canvas
-            showSignInCanvas = false;
-            showLoginCanvas = true;
+            LogInCanvas.enable();
         }else{                          // If user logged in -> show scenes list
             Scenes.setScenesListCanvasVisibility(true);
             Scenes.requestScenesList();
         }  
-
-
     
         /*
             Buttons click handlers
         */
-        logInButton = GameObject.Find("LogInButton").GetComponent<Button>();
-        logInButton.onClick.AddListener(() => Session.logIn());
-
         logOutButton = GameObject.Find("LogOutButton").GetComponent<Button>();
         logOutButton.onClick.AddListener(() => Session.logOut());
-
-        signInButton = GameObject.Find("SignInButton").GetComponent<Button>();
-        signInButton.onClick.AddListener(() => Session.makeSignInCanvasVisible());
-
-        sendButton = GameObject.Find("SendButton").GetComponent<Button>();
-        sendButton.onClick.AddListener(() => Session.signIn());
-
-        cancelButton = GameObject.Find("CancelButton").GetComponent<Button>();
-        cancelButton.onClick.AddListener(() => Session.cancelButtonAction());
-    }
-
-
-    public static void Update()
-    {
-        if(loginCanvas != null)
-            loginCanvas.enabled = showLoginCanvas;
-    
-        if(signInCanvas != null)
-            signInCanvas.enabled = showSignInCanvas;
     }
 
 
@@ -116,7 +80,7 @@ public class Session : ScriptableObject
 
             userToken = receivedToken;                                  // Save the token
 
-            showLoginCanvas = false;
+            LogInCanvas.enable(false);
 
             Scenes.setScenesListCanvasVisibility(true);        // Show scenes panel
             Scenes.requestScenesList();                  // Request scenes list
@@ -155,10 +119,10 @@ public class Session : ScriptableObject
         if(signInResponse.result == "success"){
             userToken = signInResponse.message;
         
-            showSignInCanvas = false;                           // Hide SignInCanvas
+            SignInCanvas.enable(false);                     // Hide SignInCanvas
 
-            Scenes.setScenesListCanvasVisibility(true);  // Show scenes panel
-            Scenes.requestScenesList();                  // Request scenes list
+            Scenes.setScenesListCanvasVisibility(true);     // Show scenes panel
+            Scenes.requestScenesList();                     // Request scenes list
         
         }else{
 
@@ -182,25 +146,10 @@ public class Session : ScriptableObject
 
         if(response == "OK"){
             userToken = "";                                     // Clear the actual token
-            showLoginCanvas = true;                             // Show Log In canvas
+            LogInCanvas.enable();                               // Show Log In canvas
             Scenes.setScenesListCanvasVisibility(false); // Hide scenes list canvas
         }
     }
-
-
-    /*
-        UI Methods
-    */
-    public static void makeSignInCanvasVisible(){
-        showSignInCanvas = true; 
-        showLoginCanvas = false;
-    }
-
-    public static void cancelButtonAction(){
-        showSignInCanvas = false; 
-        showLoginCanvas = true;
-    }
-
 
     /*
         Getters
