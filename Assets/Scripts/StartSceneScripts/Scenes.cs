@@ -27,26 +27,30 @@ public class EditSceneRequest{
 }
 
 
-public class Scenes : MonoBehaviour
+public class Scenes
 {
-    Canvas scenesListCanvas, newSceneCanvas, editSceneCanvas;               // Canvas
-    bool showScenesListCanvas, showNewSceneCanvas, showEditSceneCanvas;
+    static Canvas scenesListCanvas, newSceneCanvas, editSceneCanvas;               // Canvas
+    static bool showScenesListCanvas, showNewSceneCanvas, showEditSceneCanvas;
 
-    InputField newSceneNameInput, editSceneNameInput;
-    bool clearNewSceneNameInputField, clearEditSceneNameInputField;
+    static InputField newSceneNameInput, editSceneNameInput;
+    static bool clearNewSceneNameInputField, clearEditSceneNameInputField;
 
-    List<Scene> scenesList = new List<Scene>();         // Scenes list
-    GameObject scenesListScroll;
-    public GameObject scenesListItem;
-    GameObject scenesListContainer;                 
-    bool updateScenesContainer;
+    static List<Scene> scenesList = new List<Scene>();         // Scenes list
+    static GameObject scenesListScroll;
+    static public GameObject scenesListItem;
+    static GameObject scenesListContainer;                 
+    static bool updateScenesContainer;
 
-    string selectedSceneID;
+    static string selectedSceneID;
 
-    bool loadScene;
+    static bool loadScene;
+
+    static Button newSceneButton;                               // Scenes list canvas
+    static Button createSceneButton, screateSceneCancelButton;  // New Scenes canvas
+    static Button saveButton, cancelEditingButton, deleteButton;       // Edit scene canvas 
 
 
-    void Start()
+    public static void Start(GameObject newSceneListItem)
     {
         scenesListCanvas = GameObject.Find("ScenesCanvas").GetComponent<Canvas>();
         newSceneCanvas = GameObject.Find("NewSceneCanvas").GetComponent<Canvas>();
@@ -63,9 +67,34 @@ public class Scenes : MonoBehaviour
 
         scenesListScroll = GameObject.Find("ScenesListScroll");
 
+
+        scenesListItem = newSceneListItem;
+
+        /*
+            Buttons 
+        */
+        newSceneButton = GameObject.Find("NewSceneButton").GetComponent<Button>();
+        newSceneButton.onClick.AddListener(() => makeCreateSceneCanvasVisible() );
+
+
+        createSceneButton = GameObject.Find("CreateSceneButton").GetComponent<Button>();
+        createSceneButton.onClick.AddListener(() => requestCreateScene() );
+
+        screateSceneCancelButton = GameObject.Find("CreateSceneCancelButton").GetComponent<Button>();
+        screateSceneCancelButton.onClick.AddListener(() => cancelButton() );
+
+
+        saveButton = GameObject.Find("SaveButton").GetComponent<Button>();
+        saveButton.onClick.AddListener(() => requestEditScene() );
+
+        cancelEditingButton = GameObject.Find("EditSceneCancelButton").GetComponent<Button>();
+        cancelEditingButton.onClick.AddListener(() => cancelButton() );
+
+        deleteButton = GameObject.Find("DeleteSceneButton").GetComponent<Button>();
+        deleteButton.onClick.AddListener(() => requestDeleteScene() );
     }
 
-    void Update()
+    public static void Update()
     {
 
         scenesListCanvas.enabled = showScenesListCanvas;
@@ -93,7 +122,7 @@ public class Scenes : MonoBehaviour
     /*
         Create, Edit and Delete scene requests and response handler
     */
-    public void requestCreateScene(){
+    public static void requestCreateScene(){
 
         string sceneName = newSceneNameInput.text;
 
@@ -104,7 +133,7 @@ public class Scenes : MonoBehaviour
 
     }
 
-    public void requestEditScene(){
+    public static void requestEditScene(){
 
         string sceneName = editSceneNameInput.text;
 
@@ -115,11 +144,11 @@ public class Scenes : MonoBehaviour
 
     }
 
-    public void requestDeleteScene(){
+    public static void requestDeleteScene(){
         Client.sendData("requestDeleteScene", selectedSceneID);
     }
 
-    public void handleScenesModificationResponse(string response){
+    public static void handleScenesModificationResponse(string response){
 
         if(response == "OK"){
 
@@ -138,11 +167,11 @@ public class Scenes : MonoBehaviour
     /*
         Scenes list request and response handler
     */
-    public void requestScenesList(){
+    public static  void requestScenesList(){
         Client.sendData("requestScenesList", " ");                   
     }
 
-    public void handleScenesListResponse(string jsonArrayString){
+    public static void handleScenesListResponse(string jsonArrayString){
 
         try{
 
@@ -180,7 +209,7 @@ public class Scenes : MonoBehaviour
 
     }
 
-    private async void reloadScenesContainer(){
+    private static void reloadScenesContainer(){
 
         foreach(Transform transform in scenesListContainer.transform)                                               // Clear the list container
             GameObject.Destroy(transform.gameObject);
@@ -208,7 +237,7 @@ public class Scenes : MonoBehaviour
     /*
         Connect to scene request and response handler
     */
-    public void requestConnect(string sceneName){
+    public static void requestConnect(string sceneName){
         selectedSceneID = getSceneID(sceneName);
 
         if(selectedSceneID != null)
@@ -217,7 +246,7 @@ public class Scenes : MonoBehaviour
             Debug.Log("Ha ocurrido un error obteniendo el identificador de la escena");
     }
 
-    public void handleConnectResponse(string response){
+    public static void handleConnectResponse(string response){
 
         if(response == "OK"){
             loadScene = true;
@@ -227,7 +256,7 @@ public class Scenes : MonoBehaviour
     }
 
 
-    private string getSceneID(string sceneName){
+    private static string getSceneID(string sceneName){
         
         foreach(Scene scene in scenesList)
             if(String.Compare(scene.name, sceneName ) == 0)
@@ -240,11 +269,11 @@ public class Scenes : MonoBehaviour
     /*
         UI functions
     */
-    public void setScenesListCanvasVisibility(bool visibility){
+    public static void setScenesListCanvasVisibility(bool visibility){
         showScenesListCanvas = visibility;
     }
 
-    public void makeEditSceneCanvasVisible(string sceneName){
+    public static void makeEditSceneCanvasVisible(string sceneName){
 
         editSceneNameInput.text = sceneName;
         selectedSceneID = getSceneID(sceneName);
@@ -253,12 +282,12 @@ public class Scenes : MonoBehaviour
         showEditSceneCanvas = true;
     }
 
-    public void makeCreateSceneCanvasVisible(){
+    public static void makeCreateSceneCanvasVisible(){
         showScenesListCanvas = false;
         showNewSceneCanvas = true;
     }
 
-    public void cancellButton(){
+    public static void cancelButton(){
         showScenesListCanvas = true;
         showNewSceneCanvas = false;
         showEditSceneCanvas = false;
@@ -267,9 +296,10 @@ public class Scenes : MonoBehaviour
     }
 
 
-    private void loadUnityScene(){
+    private static void loadUnityScene(){
         try{
             SceneManager.LoadScene("EditScene", LoadSceneMode.Single);
+            loadScene = false;
         }catch(Exception exception){
             Debug.Log("Error cambiando de escena " + exception);
         }

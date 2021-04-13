@@ -35,13 +35,9 @@ public class Client : ScriptableObject
 
     private static WebSocket webSocket;
 
-    static Scenes scenesManager;
-
     public static void Start(){
 
         if(webSocket == null){
-            scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
-
             createConnection();
         }
     }
@@ -100,16 +96,16 @@ public class Client : ScriptableObject
                 Session.handleLogOutResponse(receivedMessage.content);
 
             else if(receivedMessage.kind == "connectCallback")              // Scenes managment Callbacks
-                scenesManager.handleConnectResponse(receivedMessage.content);
+                Scenes.handleConnectResponse(receivedMessage.content);
             
             else if(receivedMessage.kind == "disconnectCallback")
                 EditSceneManager.handleDisconnectSceneResponse(receivedMessage.content);
 
             else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
-                scenesManager.handleScenesModificationResponse(receivedMessage.content);
+                Scenes.handleScenesModificationResponse(receivedMessage.content);
           
             else if(receivedMessage.kind == "scenesListCallback")
-                scenesManager.handleScenesListResponse(receivedMessage.content);
+                Scenes.handleScenesListResponse(receivedMessage.content);
 
             else
                 Debug.Log("Tipo de mensaje desconocido " + messageString);

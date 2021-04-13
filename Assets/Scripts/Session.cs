@@ -45,15 +45,11 @@ public class Session : ScriptableObject
     private static Canvas signInCanvas;
     private static bool showLoginCanvas, showSignInCanvas;
  
-    static Scenes scenesManager;
-
     static Button logInButton, logOutButton, signInButton, sendButton, cancelButton;    // Buttons
 
 
     public static void Start()
     {
-        scenesManager = GameObject.Find("StartSceneManager").GetComponent<Scenes>();
-
         /*
             Canvas 
         */
@@ -65,8 +61,8 @@ public class Session : ScriptableObject
             showSignInCanvas = false;
             showLoginCanvas = true;
         }else{                          // If user logged in -> show scenes list
-            scenesManager.setScenesListCanvasVisibility(true);
-            scenesManager.requestScenesList();
+            Scenes.setScenesListCanvasVisibility(true);
+            Scenes.requestScenesList();
         }  
 
 
@@ -93,8 +89,11 @@ public class Session : ScriptableObject
 
     public static void Update()
     {
-        loginCanvas.enabled = showLoginCanvas;
-        signInCanvas.enabled = showSignInCanvas;
+        if(loginCanvas != null)
+            loginCanvas.enabled = showLoginCanvas;
+    
+        if(signInCanvas != null)
+            signInCanvas.enabled = showSignInCanvas;
     }
 
 
@@ -119,8 +118,8 @@ public class Session : ScriptableObject
 
             showLoginCanvas = false;
 
-            scenesManager.setScenesListCanvasVisibility(true);        // Show scenes panel
-            scenesManager.requestScenesList();                  // Request scenes list
+            Scenes.setScenesListCanvasVisibility(true);        // Show scenes panel
+            Scenes.requestScenesList();                  // Request scenes list
         }else   
             Debug.Log("No se ha podido autentificar al usuario");
 
@@ -158,8 +157,8 @@ public class Session : ScriptableObject
         
             showSignInCanvas = false;                           // Hide SignInCanvas
 
-            scenesManager.setScenesListCanvasVisibility(true);  // Show scenes panel
-            scenesManager.requestScenesList();                  // Request scenes list
+            Scenes.setScenesListCanvasVisibility(true);  // Show scenes panel
+            Scenes.requestScenesList();                  // Request scenes list
         
         }else{
 
@@ -184,7 +183,7 @@ public class Session : ScriptableObject
         if(response == "OK"){
             userToken = "";                                     // Clear the actual token
             showLoginCanvas = true;                             // Show Log In canvas
-            scenesManager.setScenesListCanvasVisibility(false); // Hide scenes list canvas
+            Scenes.setScenesListCanvasVisibility(false); // Hide scenes list canvas
         }
     }
 

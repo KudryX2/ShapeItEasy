@@ -19,8 +19,10 @@ public class EditSceneManager : ScriptableObject
 
     public static void Update(){
 
-        if(loadScene)
+        if(loadScene){
             SceneManager.LoadScene("StartScene", LoadSceneMode.Single);
+            loadScene = false;
+        }
 
     }
 
