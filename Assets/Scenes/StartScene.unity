@@ -3264,7 +3264,7 @@ GameObject:
   - component: {fileID: 974071511}
   - component: {fileID: 974071510}
   m_Layer: 5
-  m_Name: SignInCanvas
+  m_Name: SignUpCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3519,7 +3519,7 @@ GameObject:
   - component: {fileID: 1154033997}
   - component: {fileID: 1154033996}
   m_Layer: 5
-  m_Name: ScenesCanvas
+  m_Name: ScenesListCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

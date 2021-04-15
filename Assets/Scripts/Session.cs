@@ -40,8 +40,6 @@ public class Session : ScriptableObject
 {
 
     private static string connectedSceneID, userToken = "";                             // User Credentials
-    static Button logOutButton;    // Buttons
-
 
     public static void Start()
     {
@@ -49,15 +47,10 @@ public class Session : ScriptableObject
         if(userToken == ""){            // If user not logged in -> show log in canvas
             LogInCanvas.enable();
         }else{                          // If user logged in -> show scenes list
-            Scenes.setScenesListCanvasVisibility(true);
+            ScenesListCanvas.enable();
             Scenes.requestScenesList();
         }  
     
-        /*
-            Buttons click handlers
-        */
-        logOutButton = GameObject.Find("LogOutButton").GetComponent<Button>();
-        logOutButton.onClick.AddListener(() => Session.logOut());
     }
 
 
@@ -80,10 +73,8 @@ public class Session : ScriptableObject
 
             userToken = receivedToken;                                  // Save the token
 
-            LogInCanvas.enable(false);
-
-            Scenes.setScenesListCanvasVisibility(true);        // Show scenes panel
-            Scenes.requestScenesList();                  // Request scenes list
+            ScenesListCanvas.enable();                                  // Show scenes list panel
+            Scenes.requestScenesList();                                 // Request scenes list
         }else   
             Debug.Log("No se ha podido autentificar al usuario");
 
@@ -119,9 +110,7 @@ public class Session : ScriptableObject
         if(signInResponse.result == "success"){
             userToken = signInResponse.message;
         
-            SignInCanvas.enable(false);                     // Hide SignInCanvas
-
-            Scenes.setScenesListCanvasVisibility(true);     // Show scenes panel
+            ScenesListCanvas.enable();                      // Show scenes list panel
             Scenes.requestScenesList();                     // Request scenes list
         
         }else{
@@ -147,7 +136,6 @@ public class Session : ScriptableObject
         if(response == "OK"){
             userToken = "";                                     // Clear the actual token
             LogInCanvas.enable();                               // Show Log In canvas
-            Scenes.setScenesListCanvasVisibility(false); // Hide scenes list canvas
         }
     }
 

@@ -5,15 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class SignInCanvas 
+public class SignUpCanvas 
 {
-    private static Canvas signInCanvas;
+    private static Canvas canvas;
     private static bool enabled;
     private static Button sendButton, cancelButton;
 
     public static void Start()
     {
-        signInCanvas = GameObject.Find("SignInCanvas").GetComponent<Canvas>();
+        canvas = GameObject.Find("SignUpCanvas").GetComponent<Canvas>();
 
         sendButton = GameObject.Find("SendButton").GetComponent<Button>();
         sendButton.onClick.AddListener(() => Session.signIn());
@@ -23,17 +23,16 @@ public class SignInCanvas
     }
 
     public static void Update(){
-        signInCanvas.enabled = enabled;
+        canvas.enabled = enabled;
     }
 
 
-    public static void enable(bool newEnabled){
-        enabled = newEnabled;
-    }
-
-    public static void enable(){
+    public static void enable(){    // Make visible
         enabled = true;
-        LogInCanvas.enable(false);
+        LogInCanvas.disable();
     }
 
+    public static void disable(){   // Hide
+        enabled = false;
+    }
 }

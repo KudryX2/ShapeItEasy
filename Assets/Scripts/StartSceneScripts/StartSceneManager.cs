@@ -10,12 +10,14 @@ public class StartSceneManager : MonoBehaviour
     void Start()
     {
         LogInCanvas.Start();
-        SignInCanvas.Start();
+        SignUpCanvas.Start();
 
         Client.Start();
         Session.Start();
-        Scenes.Start(sceneListItem);
 
+        ScenesListCanvas.Start(sceneListItem);
+        CreateSceneCanvas.Start();
+        EditSceneCanvas.Start();
     }
 
 
@@ -24,6 +26,10 @@ public class StartSceneManager : MonoBehaviour
         Scenes.Update();
 
         LogInCanvas.Update();
-        SignInCanvas.Update();
+        SignUpCanvas.Update();
+
+        ScenesListCanvas.Update();
+        CreateSceneCanvas.Update();
+        EditSceneCanvas.Update();
     }
 }
