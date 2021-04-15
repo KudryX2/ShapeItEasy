@@ -30,7 +30,7 @@ public class ReceivedMessage{
 
 public class Client : ScriptableObject
 {
-    private static string IP = "172.20.66.141";       // Server IP
+    private static string IP = "172.20.66.113";       // Server IP
     private static int PORT = 2323;                  // Server Port
 
     private static WebSocket webSocket;
@@ -99,7 +99,7 @@ public class Client : ScriptableObject
                 Scenes.handleConnectResponse(receivedMessage.content);
             
             else if(receivedMessage.kind == "disconnectCallback")
-                EditSceneManager.handleDisconnectSceneResponse(receivedMessage.content);
+                Scenes.handleDisconnectSceneResponse(receivedMessage.content);
 
             else if(receivedMessage.kind == "createSceneCallback" || receivedMessage.kind == "editSceneCallback" || receivedMessage.kind == "deleteSceneCallback")
                 Scenes.handleScenesModificationResponse(receivedMessage.content);

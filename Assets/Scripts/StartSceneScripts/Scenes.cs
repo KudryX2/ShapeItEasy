@@ -29,102 +29,33 @@ public class EditSceneRequest{
 
 public class Scenes
 {
-    static Canvas scenesListCanvas, newSceneCanvas, editSceneCanvas;               // Canvas
-    static bool showScenesListCanvas, showNewSceneCanvas, showEditSceneCanvas;
-
-    static InputField newSceneNameInput, editSceneNameInput;
-    static bool clearNewSceneNameInputField, clearEditSceneNameInputField;
 
     static List<Scene> scenesList = new List<Scene>();         // Scenes list
-    static GameObject scenesListScroll;
-    static public GameObject scenesListItem;
-    static GameObject scenesListContainer;                 
-    static bool updateScenesContainer;
-
     static string selectedSceneID;
+    static bool loadEditingScene;
 
-    static bool loadScene;
-
-    static Button newSceneButton;                               // Scenes list canvas
-    static Button createSceneButton, screateSceneCancelButton;  // New Scenes canvas
-    static Button saveButton, cancelEditingButton, deleteButton;       // Edit scene canvas 
-
-
-    public static void Start(GameObject newSceneListItem)
-    {
-        scenesListCanvas = GameObject.Find("ScenesCanvas").GetComponent<Canvas>();
-        newSceneCanvas = GameObject.Find("NewSceneCanvas").GetComponent<Canvas>();
-        editSceneCanvas = GameObject.Find("EditSceneCanvas").GetComponent<Canvas>();
-
-        scenesListCanvas.enabled = false;
-        newSceneCanvas.enabled = false;
-        editSceneCanvas.enabled = false;
-
-        newSceneNameInput = GameObject.Find("NewSceneNameField").GetComponent<InputField>();
-        editSceneNameInput = GameObject.Find("EditSceneNameField").GetComponent<InputField>();
-
-        scenesListContainer = GameObject.Find("Content");
-
-        scenesListScroll = GameObject.Find("ScenesListScroll");
-
-
-        scenesListItem = newSceneListItem;
-
-        /*
-            Buttons 
-        */
-        newSceneButton = GameObject.Find("NewSceneButton").GetComponent<Button>();
-        newSceneButton.onClick.AddListener(() => makeCreateSceneCanvasVisible() );
-
-
-        createSceneButton = GameObject.Find("CreateSceneButton").GetComponent<Button>();
-        createSceneButton.onClick.AddListener(() => requestCreateScene() );
-
-        screateSceneCancelButton = GameObject.Find("CreateSceneCancelButton").GetComponent<Button>();
-        screateSceneCancelButton.onClick.AddListener(() => cancelButton() );
-
-
-        saveButton = GameObject.Find("SaveButton").GetComponent<Button>();
-        saveButton.onClick.AddListener(() => requestEditScene() );
-
-        cancelEditingButton = GameObject.Find("EditSceneCancelButton").GetComponent<Button>();
-        cancelEditingButton.onClick.AddListener(() => cancelButton() );
-
-        deleteButton = GameObject.Find("DeleteSceneButton").GetComponent<Button>();
-        deleteButton.onClick.AddListener(() => requestDeleteScene() );
-    }
 
     public static void Update()
     {
 
-        scenesListCanvas.enabled = showScenesListCanvas;
-        newSceneCanvas.enabled = showNewSceneCanvas;
-        editSceneCanvas.enabled = showEditSceneCanvas;
-
-        if(clearNewSceneNameInputField){
-            newSceneNameInput.text = "";
-            clearNewSceneNameInputField = false;
-        }
-
-        if(clearEditSceneNameInputField){
-            editSceneNameInput.text = "";
-            clearEditSceneNameInputField = false;
-        }
-
-        if(updateScenesContainer)
-            reloadScenesContainer();
-
-        if(loadScene)
-            loadUnityScene();
+        if(loadEditingScene)
+            try{
+                SceneManager.LoadScene("EditScene", LoadSceneMode.Single);
+                Session.setConnectedSceneID(selectedSceneID);
+                loadEditingScene = false;
+            }catch(Exception exception){
+                Debug.Log("Error cambiando de escena " + exception);
+            }
 
     }
+
 
     /*
         Create, Edit and Delete scene requests and response handler
     */
     public static void requestCreateScene(){
 
-        string sceneName = newSceneNameInput.text;
+        string sceneName = CreateSceneCanvas.getNameInput();
 
         if(sceneName != "")
             Client.sendData("requestCreateScene", sceneName);
@@ -135,7 +66,7 @@ public class Scenes
 
     public static void requestEditScene(){
 
-        string sceneName = editSceneNameInput.text;
+        string sceneName = EditSceneCanvas.getNameInput();
 
         if(sceneName != null)
             Client.sendData("requestEditScene",  JsonUtility.ToJson( new EditSceneRequest(selectedSceneID, sceneName)));
@@ -150,19 +81,12 @@ public class Scenes
 
     public static void handleScenesModificationResponse(string response){
 
-        if(response == "OK"){
-
-            Debug.Log("Modificación en las escenas exitosa");
-
-            showScenesListCanvas = true;
-            showNewSceneCanvas = false;
-            showEditSceneCanvas = false;
-        
-            clearNewSceneNameInputField = true;
-            clearEditSceneNameInputField = true;
-            requestScenesList();
-        }
+        if(response == "OK")
+            ScenesListCanvas.enable();
+        else
+            Debug.Log("Se ha producido un error " + response);
     }
+
 
     /*
         Scenes list request and response handler
@@ -201,7 +125,7 @@ public class Scenes
 
             }
 
-            updateScenesContainer = true;
+            ScenesListCanvas.updateScenesList();
 
         }catch(Exception exception){
             Debug.Log("Error parseando una lista json : " + exception);
@@ -209,30 +133,6 @@ public class Scenes
 
     }
 
-    private static void reloadScenesContainer(){
-
-        foreach(Transform transform in scenesListContainer.transform)                                               // Clear the list container
-            GameObject.Destroy(transform.gameObject);
-
-        scenesListContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(0, scenesList.Count * 41);        // Resize slider container
-
-        int x = (int)scenesListScroll.GetComponent<RectTransform>().rect.width / 2;                             
-        int y = -25 ;                                                                                               // Starting position for elements at y axis
-
-        foreach(Scene scene in scenesList){
-
-            GameObject listItem = GameObject.Instantiate(scenesListItem);                                           // Instantiate a list item
-            listItem.transform.SetParent(scenesListContainer.transform);                                            // Set listContainer as parent
-
-            listItem.transform.GetChild(0).GetComponent<Text>().text = scene.name;                                  // Change list item text
-
-            listItem.GetComponent<RectTransform>().localPosition = new Vector3(x, y, 0);                            // Change the position
-            y -= 40;
-        }
-
-        updateScenesContainer = false;
-
-    }
 
     /*
         Connect to scene request and response handler
@@ -247,15 +147,38 @@ public class Scenes
     }
 
     public static void handleConnectResponse(string response){
+        if(response == "OK")
+            loadEditingScene = true;
+        else
+            Debug.Log("Se ha producido un error : " + response);
+    }
 
-        if(response == "OK"){
-            loadScene = true;
-            Session.setConnectedSceneID(selectedSceneID);
+    /*
+        Disconnect scene request and response handler
+    */
+    public static void requestDisconnect(){
+        Client.sendData("requestDisconnect", selectedSceneID);
+    }
+
+    public static void handleDisconnectSceneResponse(string response){
+
+        try{
+            if(response == "OK"){
+                selectedSceneID = "";
+                SceneCanvas.setLoadSceneTrue();
+            }else
+                Debug.Log("Se ha producido un error : " + response);
+            
+
+        }catch(Exception exception ){
+            Debug.Log("Error : " + exception);
         }
 
     }
 
-
+    /*
+        Aux Methods
+    */
     private static string getSceneID(string sceneName){
         
         foreach(Scene scene in scenesList)
@@ -265,44 +188,16 @@ public class Scenes
         return null;
     }
 
-
-    /*
-        UI functions
-    */
-    public static void setScenesListCanvasVisibility(bool visibility){
-        showScenesListCanvas = visibility;
-    }
-
-    public static void makeEditSceneCanvasVisible(string sceneName){
-
-        editSceneNameInput.text = sceneName;
+    public static void setSelectedSceneID(string sceneName){
         selectedSceneID = getSceneID(sceneName);
-
-        showScenesListCanvas = false;
-        showEditSceneCanvas = true;
     }
 
-    public static void makeCreateSceneCanvasVisible(){
-        showScenesListCanvas = false;
-        showNewSceneCanvas = true;
+    public static string getSelectedSceneID(){
+        return selectedSceneID;
     }
 
-    public static void cancelButton(){
-        showScenesListCanvas = true;
-        showNewSceneCanvas = false;
-        showEditSceneCanvas = false;
-
-        clearNewSceneNameInputField = true;
-    }
-
-
-    private static void loadUnityScene(){
-        try{
-            SceneManager.LoadScene("EditScene", LoadSceneMode.Single);
-            loadScene = false;
-        }catch(Exception exception){
-            Debug.Log("Error cambiando de escena " + exception);
-        }
+    public static List<Scene> getScenesList(){
+        return scenesList;
     }
 
 }
