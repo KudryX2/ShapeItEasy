@@ -9,7 +9,7 @@ public class LogInCanvas
 {
     private static Canvas canvas;
     private static bool enabled;
-    static Button logInButton, signInButton;
+    static Button logInButton, signUpButton, exitButton;
 
     public static void Start()
     {
@@ -18,8 +18,11 @@ public class LogInCanvas
         logInButton = GameObject.Find("LogInButton").GetComponent<Button>();
         logInButton.onClick.AddListener(() => Session.logIn());
 
-        signInButton = GameObject.Find("SignInButton").GetComponent<Button>();
-        signInButton.onClick.AddListener(() => SignUpCanvas.enable());
+        signUpButton = GameObject.Find("SignUpButton").GetComponent<Button>();
+        signUpButton.onClick.AddListener(() => SignUpCanvas.enable());
+
+        exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
+        exitButton.onClick.AddListener(() => Application.Quit() );
     }
 
     public static void Update(){
