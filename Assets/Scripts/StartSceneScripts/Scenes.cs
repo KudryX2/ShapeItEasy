@@ -81,9 +81,10 @@ public class Scenes
 
     public static void handleScenesModificationResponse(string response){
 
-        if(response == "OK")
+        if(response == "OK"){
             ScenesListCanvas.enable();
-        else
+            Scenes.requestScenesList();
+        }else
             Debug.Log("Se ha producido un error " + response);
     }
 

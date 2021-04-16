@@ -75,6 +75,7 @@ public class ScenesListCanvas : ScriptableObject
 
     }
 
+
     public static void enable(){        // Make visible
         
         enabled = true;
@@ -82,8 +83,6 @@ public class ScenesListCanvas : ScriptableObject
         LogInCanvas.disable();
         CreateSceneCanvas.disable();
         EditSceneCanvas.disable();
-
-        Scenes.requestScenesList();
     }
 
     public static void disable(){       // Hide
