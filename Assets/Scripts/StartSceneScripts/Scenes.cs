@@ -13,16 +13,17 @@ using HybridWebSocket;
 public class Scene{
     public string id;
     public string name;
-}
+    public string description;
 
-[Serializable]
-public class EditSceneRequest{
-    public string id;
-    public string newName;
-
-    public EditSceneRequest(string id, string newName){
+    public Scene(string id, string name, string description){
         this.id = id;
-        this.newName = newName;
+        this.name = name;
+        this.description = description;
+    }
+
+    public Scene(string name, string description){
+        this.name = name;
+        this.description = description;
     }
 }
 
@@ -55,10 +56,11 @@ public class Scenes
     */
     public static void requestCreateScene(){
 
-        string sceneName = CreateSceneCanvas.getNameInput();
+        string name = CreateSceneCanvas.getNameInput();
+        string description = CreateSceneCanvas.getDescriptionInput();
 
-        if(sceneName != "")
-            Client.sendData("requestCreateScene", sceneName);
+        if(name != "")
+            Client.sendData("requestCreateScene",  JsonUtility.ToJson( new Scene(name, description)));
         else
             Debug.Log("El nombre de la escena no puede estar vacío");
 
@@ -66,10 +68,11 @@ public class Scenes
 
     public static void requestEditScene(){
 
-        string sceneName = EditSceneCanvas.getNameInput();
+        string name = EditSceneCanvas.getNameInput();
+        string description = EditSceneCanvas.getDescriptionInput();
 
-        if(sceneName != null)
-            Client.sendData("requestEditScene",  JsonUtility.ToJson( new EditSceneRequest(selectedSceneID, sceneName)));
+        if(name != null)
+            Client.sendData("requestEditScene",  JsonUtility.ToJson( new Scene(selectedSceneID, name, description)));
         else   
             Debug.Log("El nombre de la escena no puede estar vacío");
 

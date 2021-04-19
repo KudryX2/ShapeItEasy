@@ -14,8 +14,8 @@ public class CreateSceneCanvas : ScriptableObject
     private static Button createSceneButton, createSceneCancelButton;
 
 
-    private static InputField nameInputField;
-    private static bool clearNameInputField;
+    private static InputField nameInputField, descriptionInputField;
+    private static bool clearInputFields;
 
 
     public static void Start()
@@ -35,6 +35,7 @@ public class CreateSceneCanvas : ScriptableObject
             Input fields 
         */
         nameInputField = GameObject.Find("NewSceneNameField").GetComponent<InputField>();
+        descriptionInputField = GameObject.Find("NewSceneDescriptionField").GetComponent<InputField>();
 
     }
 
@@ -42,9 +43,10 @@ public class CreateSceneCanvas : ScriptableObject
     {
         canvas.enabled = enabled;
 
-        if(clearNameInputField){
+        if(clearInputFields){
             nameInputField.text = "";
-            clearNameInputField = false;
+            descriptionInputField.text = "";
+            clearInputFields = false;
         }
     }
 
@@ -56,17 +58,21 @@ public class CreateSceneCanvas : ScriptableObject
 
     public static void disable(){       // Hide
         enabled = false;
-        clearNameInputField = true;
+        clearInputFields = true;
     }
 
 
     private static void cancelButton(){
         ScenesListCanvas.enable();
-        clearNameInputField = true;
+        clearInputFields = true;
     }
 
 
     public static string getNameInput(){
         return nameInputField.text;
+    }
+
+    public static string getDescriptionInput(){
+        return descriptionInputField.text;
     }
 }
