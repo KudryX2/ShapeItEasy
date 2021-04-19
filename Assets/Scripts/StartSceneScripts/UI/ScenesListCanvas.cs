@@ -65,7 +65,8 @@ public class ScenesListCanvas : ScriptableObject
             GameObject listItem = GameObject.Instantiate(scenesListItem);                                           // Instantiate a list item
             listItem.transform.SetParent(scenesListContainer.transform);                                            // Set listContainer as parent
 
-            listItem.transform.GetChild(0).GetComponent<Text>().text = scene.name;                                  // Change list item text
+            listItem.transform.GetChild(0).GetComponent<Text>().text = scene.name;                                  // Set scene name
+            listItem.transform.GetChild(1).GetComponent<Text>().text = scene.description;                           // Set scene description
 
             listItem.GetComponent<RectTransform>().localPosition = new Vector3(x, y, 0);                            // Change the position
             y -= 40;

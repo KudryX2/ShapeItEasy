@@ -12,9 +12,10 @@ public class EditSceneButton : MonoBehaviour, IPointerDownHandler{
     
     public void OnPointerDown (PointerEventData eventData){
         string sceneName = transform.parent.GetChild(0).GetComponent<Text>().text;
+        string sceneDescription = transform.parent.GetChild(1).GetComponent<Text>().text;
 
         Scenes.setSelectedSceneID(sceneName);
-        EditSceneCanvas.enable(sceneName);
+        EditSceneCanvas.enable( new Scene(sceneName, sceneDescription) );
     }
 }
 
