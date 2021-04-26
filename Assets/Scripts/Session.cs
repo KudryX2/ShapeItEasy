@@ -10,20 +10,11 @@ using HybridWebSocket;
 
 [Serializable]
 public class UserCredentials{
+    public string name;
     public string email;
     public string password;
 
-    public UserCredentials(string email, string password){
-        this.email = email;
-        this.password = password;
-    }
-}
-
-[Serializable]
-public class SignInRequest{
-    public string name, email, password;
-
-    public SignInRequest(string name, string email, string password){
+    public UserCredentials(string name, string email, string password){
         this.name = name;
         this.email = email;
         this.password = password;
@@ -58,10 +49,22 @@ public class Session : ScriptableObject
         Log In Request and response handler
     */
     public static void logIn(){
+        
         string userEmail = GameObject.Find("UserEmail").GetComponent<InputField>().text;
-        string userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
+        if(userEmail == ""){
+            LogInCanvas.setNotificationText("User email is required");
+            return;
+        }
 
-        UserCredentials requestUserToken = new UserCredentials(userEmail, userPassword);
+        string userPassword = GameObject.Find("UserPassword").GetComponent<InputField>().text;
+        if(userPassword == ""){
+            LogInCanvas.setNotificationText("User password is required");
+            return;
+        }
+
+        LogInCanvas.setNotificationText("Loading ..."); 
+
+        UserCredentials requestUserToken = new UserCredentials("",userEmail, userPassword);
         Client.sendData("logInRequest", JsonUtility.ToJson(requestUserToken));        
     }
 
@@ -69,14 +72,11 @@ public class Session : ScriptableObject
     public static void handleLogInResponse(string receivedToken){
 
         if(receivedToken != ""){                                    // Successful connection
-            Debug.Log("Usuario autentificado correctamente");
-
             userToken = receivedToken;                                  // Save the token
-
             ScenesListCanvas.enable();                                  // Show scenes list panel
             Scenes.requestScenesList();                                 // Request scenes list
-        }else   
-            Debug.Log("No se ha podido autentificar al usuario");
+        }else
+            LogInCanvas.setNotificationText("No se ha podido autentificar al usuario, datos incorrectos");
 
     }
 
@@ -92,18 +92,18 @@ public class Session : ScriptableObject
         string userRepeatedPassword = GameObject.Find("RepeatUserPassword").GetComponent<InputField>().text;
 
         if(String.Compare(userPassword, userRepeatedPassword) == 0){                        // Check if the passwords match
-            SignInRequest signInRequest = new SignInRequest(userName, userEmail, userPassword);
-            Client.sendData("signInRequest", JsonUtility.ToJson(signInRequest));
+            UserCredentials UserCredentials = new UserCredentials(userName, userEmail, userPassword);
+            Client.sendData("signUpRequest", JsonUtility.ToJson(UserCredentials));
         }
         else{
             GameObject.Find("newUserPassword").GetComponent<InputField>().text = "";           // Clear password fields if not match
             GameObject.Find("RepeatUserPassword").GetComponent<InputField>().text = "";
-            Debug.Log("Contraseñas no coinciden");
+            SignUpCanvas.setNotificationText("Las contraseñas no coinciden");
         }
         
     }
 
-    public static void handleSignInResponse(string response){
+    public static void handleSignUpResponse(string response){
         
         SignInResponse signInResponse = JsonUtility.FromJson<SignInResponse>(response);
 
@@ -114,10 +114,8 @@ public class Session : ScriptableObject
             Scenes.requestScenesList();                     // Request scenes list
         
         }else{
-
-            Debug.Log(signInResponse.message);
+            SignUpCanvas.setNotificationText(signInResponse.message);
             // TODO dependiendo de la respuesta limpiar los campos afectados
-
         }
 
 

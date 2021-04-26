@@ -30,7 +30,7 @@ public class ReceivedMessage{
 
 public class Client : ScriptableObject
 {
-    private static string IP = "172.20.66.113";       // Server IP
+    private static string IP = "172.20.66.21";       // Server IP
     private static int PORT = 2323;                  // Server Port
 
     private static WebSocket webSocket;
@@ -89,8 +89,8 @@ public class Client : ScriptableObject
             if(receivedMessage.kind == "logInCallback")                     // Session Callbacks
                 Session.handleLogInResponse(receivedMessage.content);
                 
-            else if(receivedMessage.kind == "signInCallback")
-                Session.handleSignInResponse(receivedMessage.content);
+            else if(receivedMessage.kind == "signUpCallback")
+                Session.handleSignUpResponse(receivedMessage.content);
 
             else if(receivedMessage.kind == "logOutCallback")
                 Session.handleLogOutResponse(receivedMessage.content);

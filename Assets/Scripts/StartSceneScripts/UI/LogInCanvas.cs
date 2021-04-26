@@ -7,9 +7,12 @@ using UnityEngine.UI;
 
 public class LogInCanvas
 {
-    private static Canvas canvas;
-    private static bool enabled;
+    static Canvas canvas;
+    static bool enabled;
     static Button logInButton, signUpButton, exitButton;
+    
+    static Text notificationTextComponent;
+    static string notificationText = "";
 
     public static void Start()
     {
@@ -23,10 +26,18 @@ public class LogInCanvas
 
         exitButton = GameObject.Find("ExitButton").GetComponent<Button>();
         exitButton.onClick.AddListener(() => Application.Quit() );
+
+        notificationTextComponent = GameObject.Find("LogInNotification").GetComponent<Text>();
+        notificationTextComponent.text = "";
     }
 
     public static void Update(){
         canvas.enabled = enabled;
+
+        if(notificationText != ""){
+            notificationTextComponent.text = notificationText;
+            notificationText = "";
+        }
     }
 
     
@@ -38,5 +49,10 @@ public class LogInCanvas
 
     public static void disable(){       // Hide
         enabled = false;
+        notificationText = " ";
+    }
+
+    public static void setNotificationText(string text){
+        notificationText = text;        // We use the same variable to store the text to update and the need of action
     }
 }
