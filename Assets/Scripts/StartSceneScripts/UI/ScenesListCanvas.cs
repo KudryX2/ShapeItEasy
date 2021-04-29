@@ -55,21 +55,24 @@ public class ScenesListCanvas : ScriptableObject
 
         List<Scene> scenesList = Scenes.getScenesList();
 
-        scenesListContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(0, scenesList.Count * 41);        // Resize slider container
+        int listItemHeight = 80; 
+
+        scenesListContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(0, scenesList.Count * listItemHeight + 5);    // Resize slider container
 
         int x = (int)scenesListScroll.GetComponent<RectTransform>().rect.width / 2;                             
-        int y = -25 ;                                                                                               // Starting position for elements at y axis
+        int y = - listItemHeight/2 - 5  ;                                                                                               // Starting position for elements at y axis
 
         foreach(Scene scene in scenesList){
 
             GameObject listItem = GameObject.Instantiate(scenesListItem);                                           // Instantiate a list item
-            listItem.transform.SetParent(scenesListContainer.transform);                                            // Set listContainer as parent
+            listItem.transform.SetParent(scenesListContainer.transform, false);                                     // Set listContainer as parent
 
             listItem.transform.GetChild(0).GetComponent<Text>().text = scene.name;                                  // Set scene name
             listItem.transform.GetChild(1).GetComponent<Text>().text = scene.description;                           // Set scene description
+            listItem.transform.GetChild(2).GetComponent<Text>().text = scene.permissions;                           // Set scene permission
 
             listItem.GetComponent<RectTransform>().localPosition = new Vector3(x, y, 0);                            // Change the position
-            y -= 40;
+            y -= listItemHeight;
         }
 
         updateScenesContainer = false;

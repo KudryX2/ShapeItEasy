@@ -14,11 +14,13 @@ public class Scene{
     public string id;
     public string name;
     public string description;
+    public string permissions;
 
-    public Scene(string id, string name, string description){
+    public Scene(string id, string name, string description, string permissions){
         this.id = id;
         this.name = name;
         this.description = description;
+        this.permissions = permissions;
     }
 
     public Scene(string name, string description){
@@ -72,7 +74,7 @@ public class Scenes
         string description = EditSceneCanvas.getDescriptionInput();
 
         if(name != null)
-            Client.sendData("requestEditScene",  JsonUtility.ToJson( new Scene(selectedSceneID, name, description)));
+            Client.sendData("requestEditScene",  JsonUtility.ToJson( new Scene(selectedSceneID, name, description, "")));
         else   
             Debug.Log("El nombre de la escena no puede estar vacío");
 
