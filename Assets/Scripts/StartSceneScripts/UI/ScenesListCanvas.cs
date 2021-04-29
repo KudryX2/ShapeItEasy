@@ -59,8 +59,8 @@ public class ScenesListCanvas : ScriptableObject
 
         scenesListContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(0, scenesList.Count * listItemHeight + 5);    // Resize slider container
 
-        int x = (int)scenesListScroll.GetComponent<RectTransform>().rect.width / 2;                             
-        int y = - listItemHeight/2 - 5  ;                                                                                               // Starting position for elements at y axis
+        int x = (int)scenesListScroll.GetComponent<RectTransform>().rect.width / 2; 
+        int y = - listItemHeight/2 - 5  ;                                                                                       // Starting position for elements at y axis
 
         foreach(Scene scene in scenesList){
 

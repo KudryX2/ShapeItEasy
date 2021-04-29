@@ -30,7 +30,7 @@ public class ReceivedMessage{
 
 public class Client : ScriptableObject
 {
-    private static string IP = "172.20.66.21";       // Server IP
+    private static string IP = "172.20.66.109";       // Server IP
     private static int PORT = 2323;                  // Server Port
 
     private static WebSocket webSocket;
