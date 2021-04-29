@@ -11,6 +11,9 @@ public class SignUpCanvas
     private static bool enabled;
     private static Button sendButton, cancelButton;
 
+    static Text notificationTextComponent;
+    static string notificationText = "";
+
     public static void Start()
     {
         canvas = GameObject.Find("SignUpCanvas").GetComponent<Canvas>();
@@ -19,11 +22,19 @@ public class SignUpCanvas
         sendButton.onClick.AddListener(() => Session.signIn());
 
         cancelButton = GameObject.Find("CancelButton").GetComponent<Button>();
-        cancelButton.onClick.AddListener(() => LogInCanvas.enable());        
+        cancelButton.onClick.AddListener(() => LogInCanvas.enable());   
+
+        notificationTextComponent = GameObject.Find("SignUpNotifications").GetComponent<Text>();
+        notificationTextComponent.text = "";     
     }
 
     public static void Update(){
         canvas.enabled = enabled;
+
+        if(notificationText != ""){
+            notificationTextComponent.text = notificationText;
+            notificationText = "";
+        }
     }
 
 
@@ -35,4 +46,10 @@ public class SignUpCanvas
     public static void disable(){   // Hide
         enabled = false;
     }
+
+
+    public static void setNotificationText(string text){
+        notificationText = text;
+    }
+
 }

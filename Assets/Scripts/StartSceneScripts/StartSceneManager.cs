@@ -17,7 +17,7 @@ public class StartSceneManager : MonoBehaviour
 
         ScenesListCanvas.Start(sceneListItem);
         CreateSceneCanvas.Start();
-        EditSceneCanvas.Start();
+        EditSceneCanvas.Start(); 
     }
 
 

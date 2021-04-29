@@ -20,7 +20,7 @@ public class CreateSceneCanvas : ScriptableObject
 
     public static void Start()
     {
-        canvas = GameObject.Find("NewSceneCanvas").GetComponent<Canvas>();
+        canvas = GameObject.Find("CreateSceneCanvas").GetComponent<Canvas>();
 
         /*
             Buttons
@@ -34,8 +34,8 @@ public class CreateSceneCanvas : ScriptableObject
         /*
             Input fields 
         */
-        nameInputField = GameObject.Find("NewSceneNameField").GetComponent<InputField>();
-        descriptionInputField = GameObject.Find("NewSceneDescriptionField").GetComponent<InputField>();
+        nameInputField = GameObject.Find("CreateSceneNameField").GetComponent<InputField>();
+        descriptionInputField = GameObject.Find("CreateSceneDescriptionField").GetComponent<InputField>();
 
     }
 
