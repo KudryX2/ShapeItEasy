@@ -15,6 +15,8 @@ public class Scene{
     public string name;
     public string description;
     public string permissions;
+    public string shareViewID;
+    public string shareEditID;
 
     public Scene(string id, string name, string description, string permissions){
         this.id = id;
@@ -190,6 +192,14 @@ public class Scenes
         foreach(Scene scene in scenesList)
             if(String.Compare(scene.name, sceneName ) == 0)
                 return scene.id;
+
+        return null;
+    }
+
+    public static Scene getScene(string sceneName){
+        foreach(Scene scene in scenesList)
+            if(String.Compare(scene.name, sceneName ) == 0)
+                return scene;
 
         return null;
     }
