@@ -107,6 +107,9 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "scenesListCallback")
                 Scenes.handleScenesListResponse(receivedMessage.content);
 
+            else if(receivedMessage.kind == "addSceneCallback")
+                Scenes.handleAddSceneResponse(receivedMessage.content);
+                
             else
                 Debug.Log("Tipo de mensaje desconocido " + messageString);
 

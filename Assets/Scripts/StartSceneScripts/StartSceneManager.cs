@@ -19,6 +19,7 @@ public class StartSceneManager : MonoBehaviour
         CreateSceneCanvas.Start();
         EditSceneCanvas.Start(); 
         ShareSceneCanvas.Start();
+        AddSceneCanvas.Start();
     }
 
 
@@ -33,5 +34,6 @@ public class StartSceneManager : MonoBehaviour
         CreateSceneCanvas.Update();
         EditSceneCanvas.Update();
         ShareSceneCanvas.Update();
+        AddSceneCanvas.Update();
     }
 }

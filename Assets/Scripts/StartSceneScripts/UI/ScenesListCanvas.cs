@@ -10,7 +10,7 @@ public class ScenesListCanvas : ScriptableObject
     private static Canvas canvas;
     private static bool enabled;
 
-    static Button logOutButton, newSceneButton;
+    static Button logOutButton, newSceneButton, addSceneButton;
 
     // Scenes List
     static GameObject scenesListItem, scenesListScroll, scenesListContainer;                 
@@ -29,6 +29,9 @@ public class ScenesListCanvas : ScriptableObject
 
         newSceneButton = GameObject.Find("NewSceneButton").GetComponent<Button>();
         newSceneButton.onClick.AddListener(() => CreateSceneCanvas.enable() );
+
+        addSceneButton = GameObject.Find("AddSceneButton").GetComponent<Button>();
+        addSceneButton.onClick.AddListener(() => AddSceneCanvas.enable() );
 
         /*
             Scenes List
@@ -87,6 +90,8 @@ public class ScenesListCanvas : ScriptableObject
         LogInCanvas.disable();
         CreateSceneCanvas.disable();
         EditSceneCanvas.disable();
+        ShareSceneCanvas.disable();
+        AddSceneCanvas.disable();
     }
 
     public static void disable(){       // Hide

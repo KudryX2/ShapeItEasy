@@ -185,6 +185,29 @@ public class Scenes
     }
 
     /*
+        Add scene request and response handler
+    */
+    public static void requestAddScene(string inputId){
+
+        if(String.Compare(inputId, "") == 0)          // Before sending the request check if input is not empty
+            AddSceneCanvas.showNotification("El campo es obligatorio");
+        else{
+            AddSceneCanvas.showNotification("Loading ...");
+            Client.sendData("requestAddScene", inputId);  
+        }
+    }
+
+    public static void handleAddSceneResponse(string response){
+
+        if(response == "OK"){         
+            requestScenesList();
+            ScenesListCanvas.enable();
+        }else                               
+            AddSceneCanvas.showNotification(response);
+        
+    }
+
+    /*
         Aux Methods
     */
     private static string getSceneID(string sceneName){
