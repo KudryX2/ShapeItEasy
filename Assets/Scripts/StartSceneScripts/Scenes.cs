@@ -15,6 +15,8 @@ public class Scene{
     public string name;
     public string description;
     public string permissions;
+    public string shareViewID;
+    public string shareEditID;
 
     public Scene(string id, string name, string description, string permissions){
         this.id = id;
@@ -183,6 +185,29 @@ public class Scenes
     }
 
     /*
+        Add scene request and response handler
+    */
+    public static void requestAddScene(string inputId){
+
+        if(String.Compare(inputId, "") == 0)          // Before sending the request check if input is not empty
+            AddSceneCanvas.showNotification("El campo es obligatorio");
+        else{
+            AddSceneCanvas.showNotification("Loading ...");
+            Client.sendData("requestAddScene", inputId);  
+        }
+    }
+
+    public static void handleAddSceneResponse(string response){
+
+        if(response == "OK"){         
+            requestScenesList();
+            ScenesListCanvas.enable();
+        }else                               
+            AddSceneCanvas.showNotification(response);
+        
+    }
+
+    /*
         Aux Methods
     */
     private static string getSceneID(string sceneName){
@@ -190,6 +215,14 @@ public class Scenes
         foreach(Scene scene in scenesList)
             if(String.Compare(scene.name, sceneName ) == 0)
                 return scene.id;
+
+        return null;
+    }
+
+    public static Scene getScene(string sceneName){
+        foreach(Scene scene in scenesList)
+            if(String.Compare(scene.name, sceneName ) == 0)
+                return scene;
 
         return null;
     }

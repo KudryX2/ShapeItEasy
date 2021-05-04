@@ -30,7 +30,7 @@ public class ReceivedMessage{
 
 public class Client : ScriptableObject
 {
-    private static string IP = "172.20.66.109";       // Server IP
+    private static string IP = "172.20.66.144";       // Server IP
     private static int PORT = 2323;                  // Server Port
 
     private static WebSocket webSocket;
@@ -107,6 +107,9 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "scenesListCallback")
                 Scenes.handleScenesListResponse(receivedMessage.content);
 
+            else if(receivedMessage.kind == "addSceneCallback")
+                Scenes.handleAddSceneResponse(receivedMessage.content);
+                
             else
                 Debug.Log("Tipo de mensaje desconocido " + messageString);
 
