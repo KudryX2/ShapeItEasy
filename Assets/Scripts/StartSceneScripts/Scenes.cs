@@ -210,7 +210,7 @@ public class Scenes
     /*
         Aux Methods
     */
-    private static string getSceneID(string sceneName){
+    public static string getSceneID(string sceneName){
         
         foreach(Scene scene in scenesList)
             if(String.Compare(scene.name, sceneName ) == 0)
