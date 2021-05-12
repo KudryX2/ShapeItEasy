@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 using UnityEngine.UI;
 
@@ -76,6 +77,13 @@ public class ScenesListCanvas : ScriptableObject
 
             listItem.GetComponent<RectTransform>().localPosition = new Vector3(x, y, 0);                            // Change the position
             y -= listItemHeight;
+
+            if(String.Compare(scene.permissions, "owner") != 0 ){                                                   // If the user is not the owner
+                listItem.transform.GetChild(3).gameObject.SetActive(false);                                             // Disable share button 
+                listItem.transform.GetChild(4).gameObject.SetActive(false);                                             // Disable edit button
+            }else{
+                listItem.transform.GetChild(5).gameObject.SetActive(false);                                             // Disable delete button
+            }
         }
 
         updateScenesContainer = false;
