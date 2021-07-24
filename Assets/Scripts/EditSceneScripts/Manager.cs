@@ -10,11 +10,13 @@ public class Manager : MonoBehaviour
     void Start()
     {
         SceneCanvas.Start();   
+        AddShapeCanvas.Start();
     }
 
     // Update is called once per frame
     void Update()
     {
         SceneCanvas.Update();
+        AddShapeCanvas.Update();
     }
 }

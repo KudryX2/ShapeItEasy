@@ -15,7 +15,7 @@ public class ShapesDropDown : CustomDropDown
 
         if(option == optionsList[0].gameObject.name){   // Add Shape -> show add shape panel
             hideOptions();
-            addShapePanel.GetComponent<AddShapePanel>().show();
+            AddShapeCanvas.enable();
         }
     }
 }

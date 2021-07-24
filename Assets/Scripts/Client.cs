@@ -95,6 +95,7 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "logOutCallback")
                 Session.handleLogOutResponse(receivedMessage.content);
 
+
             else if(receivedMessage.kind == "connectCallback")              // Scenes managment Callbacks
                 Scenes.handleConnectResponse(receivedMessage.content);
             
@@ -110,6 +111,11 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "addSceneCallback")
                 Scenes.handleAddSceneResponse(receivedMessage.content);
                 
+
+            else if(receivedMessage.kind == "addShapeCallback")             // Edit Scene Callbacks
+                SceneEditor.handleAddShapeResponse(receivedMessage.content);
+
+
             else
                 Debug.Log("Tipo de mensaje desconocido " + messageString);
 
