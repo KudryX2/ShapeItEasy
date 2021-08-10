@@ -30,7 +30,7 @@ public class ReceivedMessage{
 
 public class Client : ScriptableObject
 {
-    private static string IP = "192.168.1.105";       // Server IP
+    private static string IP = "192.168.1.107";       // Server IP
     private static int PORT = 2323;                  // Server Port
 
     private static WebSocket webSocket;
@@ -47,7 +47,7 @@ public class Client : ScriptableObject
         
         try{
 
-            webSocket = WebSocketFactory.CreateInstance("wss://" + IP + ":" + PORT);
+            webSocket = WebSocketFactory.CreateInstance("ws://" + IP + ":" + PORT);
 
             webSocket.OnOpen += () => {
                 Debug.Log("Conexión con el servidor establecida");
@@ -86,7 +86,10 @@ public class Client : ScriptableObject
         }
 
         if(parsedOK)
-            if(receivedMessage.kind == "logInCallback")                     // Session Callbacks
+            /*
+                Session Callbacks
+            */
+            if(receivedMessage.kind == "logInCallback")                     
                 Session.handleLogInResponse(receivedMessage.content);
                 
             else if(receivedMessage.kind == "signUpCallback")
@@ -95,7 +98,10 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "logOutCallback")
                 Session.handleLogOutResponse(receivedMessage.content);
 
-            else if(receivedMessage.kind == "connectCallback")              // Scenes managment Callbacks
+            /*
+                Scenes managment Callbacks
+            */
+            else if(receivedMessage.kind == "connectCallback")              
                 Scenes.handleConnectResponse(receivedMessage.content);
             
             else if(receivedMessage.kind == "disconnectCallback")
@@ -110,6 +116,18 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "addSceneCallback")
                 Scenes.handleAddSceneResponse(receivedMessage.content);
                 
+            /*
+                Edit Scene Callbacks
+            */
+            else if(receivedMessage.kind == "addShapeCallback")             
+                SceneEditor.handleAddShapeResponse(receivedMessage.content);
+
+            /* 
+                Broadcasts
+            */
+            else if(receivedMessage.kind == "sceneUpdate")
+                SceneEditor.handleSceneUpdateMessage(receivedMessage.content);
+
             else
                 Debug.Log("Tipo de mensaje desconocido " + messageString);
 

@@ -471,7 +471,7 @@ namespace HybridWebSocket
                 this.ws = new WebSocketSharp.WebSocket(url);
 
                 // FIX encontrado aqui -> https://github.com/jirihybek/unity-websocket-webgl/issues/6
-                this.ws.SslConfiguration.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+            //    this.ws.SslConfiguration.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
 
 
                 // Bind OnOpen event
