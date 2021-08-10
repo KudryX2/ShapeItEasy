@@ -56,9 +56,6 @@ public class SceneEditor
     }
 
     public static void handleAddShapeResponse(string response){
-
-        // TODO mostrar la figura añadida en el lado de cliente si la respuesta es correcta
-
         if(response == "OK")
             AddShapeCanvas.disable();
         else
@@ -88,8 +85,6 @@ public class SceneEditor
             newObject = GameObject.CreatePrimitive(PrimitiveType.Cube); 
 
         if(newObject != null){                              // Set parent and position
-            Debug.Log("added cube");
-
             newObject.transform.SetParent(shapesContainer.transform);            
             newObject.transform.localPosition = new Vector3(shape.x, shape.y, shape.z);    
         }
