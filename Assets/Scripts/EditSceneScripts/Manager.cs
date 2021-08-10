@@ -11,6 +11,7 @@ public class Manager : MonoBehaviour
     {
         SceneCanvas.Start();   
         AddShapeCanvas.Start();
+        SceneEditor.Start();
     }
 
     // Update is called once per frame
@@ -18,5 +19,6 @@ public class Manager : MonoBehaviour
     {
         SceneCanvas.Update();
         AddShapeCanvas.Update();
+        SceneEditor.Update();
     }
 }
