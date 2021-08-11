@@ -31,6 +31,13 @@ public class Scene{
     }
 }
 
+[Serializable]
+public class ConnectResponse{
+    public string status;
+    public string info;
+}
+
+
 
 public class Scenes
 {
@@ -155,10 +162,20 @@ public class Scenes
     }
 
     public static void handleConnectResponse(string response){
-        if(response == "OK")
-            loadEditingScene = true;
-        else
-            Debug.Log("Se ha producido un error : " + response);
+
+        try{
+            ConnectResponse connectResponse = JsonUtility.FromJson<ConnectResponse>(response);
+
+            if(connectResponse.status == "OK"){
+                loadEditingScene = true;            
+                SceneEditor.loadScene(connectResponse.info);
+            }else
+                Debug.Log("Se ha producido un error : " + response);
+
+        }catch(Exception exception){
+            Debug.Log(exception);
+        }
+
     }
 
     /*

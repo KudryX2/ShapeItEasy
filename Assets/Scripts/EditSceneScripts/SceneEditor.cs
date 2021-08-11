@@ -25,6 +25,12 @@ public class SceneUpdateMessage{
     public float x, y, z;
 }
 
+[Serializable]
+public class ShapeInfo{
+    public string kind;
+    public float x, y, z;
+}
+
 
 public class SceneEditor
 {
@@ -34,8 +40,11 @@ public class SceneEditor
 
     public static void Start()
     {
-        shapesContainer = GameObject.Find("ShapesContainer");
-        shapesToAddList = new List<Shape>();
+        if(shapesContainer == null)
+            shapesContainer = GameObject.Find("ShapesContainer");
+    
+        if(shapesToAddList == null)
+            shapesToAddList = new List<Shape>();
     }
 
 
@@ -88,6 +97,45 @@ public class SceneEditor
             newObject.transform.SetParent(shapesContainer.transform);            
             newObject.transform.localPosition = new Vector3(shape.x, shape.y, shape.z);    
         }
+
+    }
+
+    public static void loadScene(string info){
+
+        try{
+
+            if(shapesToAddList == null)
+                shapesToAddList = new List<Shape>();
+
+            info = info.Replace("[", "");
+            info = info.Replace("]", "");
+            info = info.Replace("'", "\"");
+
+            bool elementDetected = false;
+            string element = "";
+
+            for( int i = 0 ; i < info.Length ; ++i){
+
+                if(info[i] == '{')      
+                    elementDetected = true;
+
+                if(elementDetected)
+                    element += info[i];
+
+                if(info[i] == '}' && elementDetected){  
+                    ShapeInfo shape = JsonUtility.FromJson<ShapeInfo>(element);
+                    shapesToAddList.Add(new Shape(shape.kind, shape.x, shape.y, shape.z));
+
+                    elementDetected = false;
+                    element = "";
+                }
+
+            }
+
+        }catch(Exception exception){
+            Debug.Log("Error cargando la escena : " + exception );
+        }
+
 
     }
 
