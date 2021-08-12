@@ -11,6 +11,7 @@ public class AddShapeCanvas : ScriptableObject
     private static bool enabled;
 
     private static Button sendButton, cancelButton;
+    private static bool sendButtonEnabled;
 
     private static Dropdown shapeSelector;
     private static GameObject camera;
@@ -34,23 +35,29 @@ public class AddShapeCanvas : ScriptableObject
     public static void Update()
     {
         canvas.enabled = enabled;
+        sendButton.enabled = sendButtonEnabled;
     }
 
     public static void enable(){
         enabled = true;
+        sendButtonEnabled = true;
     }
 
     public static void disable(){
         enabled = false;
+        sendButtonEnabled = false;
     }
 
     private static void addShapeButton(){
+        SceneEditor.enablePlacingShapeMode(shapeSelector.captionText.text);
+        disable();
 
-        Vector3 mouse = Input.mousePosition;            
-        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, camera.transform.position.y));
-        Vector3 forward = mouseWorld + camera.transform.forward;        // In front of the camera
+        // Vector3 mouse = Input.mousePosition;            
+        // Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, camera.transform.position.y));
+        // Vector3 forward = mouseWorld + camera.transform.forward;        // In front of the camera
         
-        SceneEditor.requestAddShape(shapeSelector.captionText.text, forward);
+
+    //    SceneEditor.requestAddShape(shapeSelector.captionText.text, forward);
     }
 
 }

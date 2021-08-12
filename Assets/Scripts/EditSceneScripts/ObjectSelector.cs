@@ -28,7 +28,7 @@ public class ObjectSelector : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && !SceneEditor.getPlacingShapesMode())
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out raycastHit)){
             
                 if(!raycastHit.collider.name.Contains("Pointer")){          // Object selected
@@ -57,6 +57,10 @@ public class ObjectSelector : MonoBehaviour
                 pointersContainer.SetActive(false);                 // Hide the pointers
             }
 
+        if(SceneEditor.getPlacingShapesMode()){     // If placingShapeMode -> disable object selection
+            selectedObject = null;
+            deletePointers();
+        }
 
     }
 

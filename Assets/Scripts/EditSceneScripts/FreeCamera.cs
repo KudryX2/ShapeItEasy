@@ -38,8 +38,13 @@ public class FreeCamera : MonoBehaviour
             calculateCameraMovement();
         }
 
-        if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){     // Key P -> release the cursor
+        if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){        // Key P -> release the cursor
             freeCursor = !freeCursor; 
+            updateCursor();
+        }
+
+        if(SceneEditor.getPlacingShapesMode() && freeCursor){                       // If placingShapeMode -> allow movement 
+            freeCursor = false;
             updateCursor();
         }
 
@@ -90,7 +95,7 @@ public class FreeCamera : MonoBehaviour
         rigidbody.MovePosition(transform.position + movement);  // Move 
     }
 
-    private void updateCursor(){
+    public void updateCursor(){
         if(freeCursor){
             Cursor.lockState = CursorLockMode.None;         // Free the cursor
             Cursor.visible = true;                          // Show el cursor
@@ -98,6 +103,7 @@ public class FreeCamera : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;       // Lock the cursor
             Cursor.visible = false;                         // Hide el cursor
         }
+
     }
 
 }
