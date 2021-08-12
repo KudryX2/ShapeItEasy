@@ -36,6 +36,8 @@ public class FreeCamera : MonoBehaviour
         if(!freeCursor){
             calculateCameraRotation();
             calculateCameraMovement();
+        
+            InfoCanvas.setPositionText(transform.position);
         }
 
         if(Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape)){        // Key P -> release the cursor

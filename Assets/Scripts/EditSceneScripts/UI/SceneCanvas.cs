@@ -12,6 +12,7 @@ public class SceneCanvas : ScriptableObject
 
     static bool loadScene;
 
+
     public static void Start(){
         disconnectSceneButton = GameObject.Find("DisconnectSceneButton").GetComponent<Button>();
         disconnectSceneButton.onClick.AddListener(() => Scenes.requestDisconnect());
