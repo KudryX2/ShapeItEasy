@@ -77,15 +77,15 @@ public class SceneEditor
             Vector3 forward = camera.transform.TransformPoint(Vector3.forward * placingShapeDistance);
             placingShapeTemplateObject.transform.localPosition = forward;   // Update template object position
         
-            if(Input.GetKeyDown(KeyCode.Return)){       // ENTER KEY + placingShapeMode -> requestAddShape 
+            if(Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0)){    // ENTER KEY + placingShapeMode -> requestAddShape 
                 requestAddShape(placingShapeKind, forward);                 // Request
                 disablePlacingShapeMode();
             }
 
-            if(Input.GetKeyDown(KeyCode.Escape))        // ESCAPE KEY + placingShapeMode -> cancel 
+            if(Input.GetKeyDown(KeyCode.Escape))                                    // ESCAPE KEY + placingShapeMode -> cancel 
                 disablePlacingShapeMode();
 
-            if(Input.mouseScrollDelta.y > 0)            // MOUSE SCROLL -> distance 
+            if(Input.mouseScrollDelta.y > 0)                                        // MOUSE SCROLL -> distance 
                 placingShapeDistance += 0.1f;
         
              if(Input.mouseScrollDelta.y < 0 && placingShapeDistance > 1.5f)
@@ -147,13 +147,16 @@ public class SceneEditor
             placingShapeTemplateObject = GameObject.CreatePrimitive(PrimitiveType.Cube); 
 
         if(placingShapeTemplateObject != null)              // Set parent
-            placingShapeTemplateObject.transform.SetParent(shapesTemplateContainer.transform);             
+            placingShapeTemplateObject.transform.SetParent(shapesTemplateContainer.transform);   
 
+        InfoCanvas.setTipsText("ENTER or LEFT CLICK to add shape, ESCAPE to cancel, MOUSEWHEEL to change the distance");          
     }
 
     public static void disablePlacingShapeMode(){
         placingShapeMode = false;                           // Disable placing mode and delete aux object
         UnityEngine.Object.Destroy(shapesTemplateContainer.transform.GetChild(0).gameObject);
+
+        InfoCanvas.setTipsText("");
     }
 
 
