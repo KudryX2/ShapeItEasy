@@ -14,14 +14,11 @@ public class InfoCanvas : ScriptableObject
     static string positionString, tipsString;
 
 
-    public static void Start()
-    {
-        if(infoText == null)
-            infoText = GameObject.Find("InfoText").GetComponent<Text>();
+    public static void Start(){
+        infoText = GameObject.Find("InfoText").GetComponent<Text>();
     }
 
-    public static void Update()
-    {
+    public static void Update(){
         if(needUpdate){
             infoText.text = positionString + " | " + tipsString;
             needUpdate = false;
