@@ -37,6 +37,14 @@ public class SceneEditor
     public static GameObject shapesContainer;       // Stores shapes in the scene   
     public static List<Shape> shapesToAddList;      // List os shapes pending to add to the scene
 
+    static bool placingShapeMode;                   // placingShapeMode enabled/disabled
+    static string placingShapeKind;                 // shape kind 
+    static GameObject placingShapeTemplateObject;   // template aux object
+    static GameObject shapesTemplateContainer;      // stores the templace shape
+    static float placingShapeDistance;              // distance to the placing object
+
+    private static GameObject camera;               // Main Camera
+
 
     public static void Start()
     {
@@ -45,6 +53,13 @@ public class SceneEditor
     
         if(shapesToAddList == null)
             shapesToAddList = new List<Shape>();
+    
+        if(shapesTemplateContainer == null)
+            shapesTemplateContainer = GameObject.Find("ShapesTemplateContainer");
+
+        placingShapeMode = false;
+
+        camera = GameObject.Find("Camera"); 
     }
 
 
@@ -57,6 +72,27 @@ public class SceneEditor
             shapesToAddList.Clear();
         }
             
+
+        if(placingShapeMode){                       
+            Vector3 forward = camera.transform.TransformPoint(Vector3.forward * placingShapeDistance);
+            placingShapeTemplateObject.transform.localPosition = forward;   // Update template object position
+        
+            if(Input.GetKeyDown(KeyCode.Return)){       // ENTER KEY + placingShapeMode -> requestAddShape 
+                requestAddShape(placingShapeKind, forward);                 // Request
+                disablePlacingShapeMode();
+            }
+
+            if(Input.GetKeyDown(KeyCode.Escape))        // ESCAPE KEY + placingShapeMode -> cancel 
+                disablePlacingShapeMode();
+
+            if(Input.mouseScrollDelta.y > 0)            // MOUSE SCROLL -> distance 
+                placingShapeDistance += 0.1f;
+        
+             if(Input.mouseScrollDelta.y < 0 && placingShapeDistance > 1.5f)
+                placingShapeDistance -= 0.1f;
+
+        }
+
     }
 
     public static void requestAddShape(String shape, Vector3 position){
@@ -100,6 +136,28 @@ public class SceneEditor
 
     }
 
+
+    public static void enablePlacingShapeMode(string shapeKind){
+
+        placingShapeMode = true;
+        placingShapeKind = shapeKind;
+        placingShapeDistance = 3f;
+
+        if(placingShapeKind == "Cube")
+            placingShapeTemplateObject = GameObject.CreatePrimitive(PrimitiveType.Cube); 
+
+        if(placingShapeTemplateObject != null)              // Set parent
+            placingShapeTemplateObject.transform.SetParent(shapesTemplateContainer.transform);             
+
+    }
+
+    public static void disablePlacingShapeMode(){
+        placingShapeMode = false;                           // Disable placing mode and delete aux object
+        UnityEngine.Object.Destroy(shapesTemplateContainer.transform.GetChild(0).gameObject);
+    }
+
+
+
     public static void loadScene(string info){
 
         try{
@@ -139,4 +197,8 @@ public class SceneEditor
 
     }
 
+    
+    public static bool getPlacingShapesMode(){          // Called from ObjectSelector.cs y FreeCamera.cs
+        return placingShapeMode;
+    }
 }
