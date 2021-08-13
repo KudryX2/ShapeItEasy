@@ -51,13 +51,6 @@ public class AddShapeCanvas : ScriptableObject
     private static void addShapeButton(){
         SceneEditor.enablePlacingShapeMode(shapeSelector.captionText.text);
         disable();
-
-        // Vector3 mouse = Input.mousePosition;            
-        // Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(new Vector3(mouse.x, mouse.y, camera.transform.position.y));
-        // Vector3 forward = mouseWorld + camera.transform.forward;        // In front of the camera
-        
-
-    //    SceneEditor.requestAddShape(shapeSelector.captionText.text, forward);
     }
 
 }
