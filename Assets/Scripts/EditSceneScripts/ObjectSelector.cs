@@ -35,6 +35,7 @@ public class ObjectSelector : MonoBehaviour
                     
                     selectedObject = raycastHit.collider.gameObject;                // Update selected object
                     pointersContainer.SetActive(true);                              // Show pointers
+                    SelectedShapeInfoCanvas.setSelectedObject(selectedObject);      // Show selected shape info panel
 
                     if(pointersContainer.transform.childCount == 0)                     // Create pointers if not created
                         createPointers();
@@ -55,6 +56,7 @@ public class ObjectSelector : MonoBehaviour
             }else{                                          // Clicked on empty space
                 selectedObject = null;
                 pointersContainer.SetActive(false);                 // Hide the pointers
+                SelectedShapeInfoCanvas.disable();                  // Hide selected shape info panel
             }
 
         if(SceneEditor.getPlacingShapesMode()){     // If placingShapeMode -> disable object selection

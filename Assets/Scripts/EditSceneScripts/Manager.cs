@@ -13,6 +13,7 @@ public class Manager : MonoBehaviour
         AddShapeCanvas.Start();
         SceneEditor.Start();
         InfoCanvas.Start();
+        SelectedShapeInfoCanvas.Start();
     }
 
     // Update is called once per frame
@@ -22,5 +23,6 @@ public class Manager : MonoBehaviour
         AddShapeCanvas.Update();
         SceneEditor.Update();
         InfoCanvas.Update();
+        SelectedShapeInfoCanvas.Update();
     }
 }

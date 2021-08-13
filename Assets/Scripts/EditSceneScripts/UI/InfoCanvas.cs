@@ -26,7 +26,7 @@ public class InfoCanvas : ScriptableObject
     }
 
     public static void setPositionText(Vector3 position){
-        positionString = "Position : " + (int)position.x + " " + (int)position.y + " " + (int)position.z;
+        positionString = "Position : " + position.x.ToString("0.##") + " " + position.y.ToString("0.##") + " " + position.z.ToString("0.##");
         needUpdate = true;
     }
 
