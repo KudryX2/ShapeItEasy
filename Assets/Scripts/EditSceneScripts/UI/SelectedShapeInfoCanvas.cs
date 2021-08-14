@@ -170,11 +170,15 @@ public class SelectedShapeInfoCanvas : ScriptableObject
 
         foreach (var attributeCell in attributes)
             attributeCell.disableEditingMode();   
+
+        InfoCanvas.setTipsText("CLICK on attribute to modify it / stop modifying, MOUSEWHEEL to increase or decrease the value");
     }
 
     public static void disable(){
         enabled = false;
         selectedObject = null;
+
+        InfoCanvas.setTipsText("");
     }
 
     
