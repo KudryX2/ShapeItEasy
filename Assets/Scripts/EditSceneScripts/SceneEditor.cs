@@ -88,13 +88,16 @@ public class SceneEditor
             if(Input.mouseScrollDelta.y > 0)                                        // MOUSE SCROLL -> distance 
                 placingShapeDistance += 0.1f;
         
-             if(Input.mouseScrollDelta.y < 0 && placingShapeDistance > 1.5f)
+            if(Input.mouseScrollDelta.y < 0 && placingShapeDistance > 1.5f)
                 placingShapeDistance -= 0.1f;
 
         }
 
     }
 
+    /*
+        Add Shape Request
+    */
     public static void requestAddShape(String shape, Vector3 position){
         AddShapeRequestData addShapeRequestData = new AddShapeRequestData(shape, position);
         Client.sendData("addShape", JsonUtility.ToJson(addShapeRequestData));
@@ -107,7 +110,9 @@ public class SceneEditor
             Debug.Log("Error añadiendo una figura");
     }
 
-
+    /*
+        Update Scene Message
+    */
     public static void handleSceneUpdateMessage(string message){
 
         try{
@@ -121,6 +126,24 @@ public class SceneEditor
         }
 
     }
+
+    /*
+        Modify Object Request
+    */
+    public static void requestModifyObject(GameObject updatedObject){
+        Vector3 position = updatedObject.transform.position;
+        Vector3 scale = updatedObject.transform.localScale;
+        Vector3 rotation = updatedObject.transform.rotation.eulerAngles;
+
+        Debug.Log(position);
+    }
+
+    public static void handlModifyObjectResponse(string response){
+        Debug.Log(response);
+
+    }
+
+
 
 
     private static void addShape(Shape shape){
