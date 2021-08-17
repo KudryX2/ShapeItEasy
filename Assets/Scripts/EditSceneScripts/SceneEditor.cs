@@ -22,25 +22,31 @@ public class AddShapeRequestData{
 [Serializable]
 public class SceneUpdateMessage{
     public string action, id, shape;
-    public float x, y, z;
+    public float    x , y , z,
+                    sx, sy, sz,
+                    rx, ry, rz;
 }
 
 [Serializable]
 public class ShapeInfo{
     public string id, kind;
-    public float x, y, z;
+    public float    x , y , z,
+                    sx, sy, sz,
+                    rx, ry, rz;
 }
 
 [Serializable]
 public class UpdateShapeRequest{
     public string shapeID;
     public Vector3 position, scale, rotation;
+    public string sceneID;
 
     public UpdateShapeRequest(string shapeID, Vector3 position, Vector3 scale, Vector3 rotation){
         this.shapeID = shapeID;
         this.position = position;
         this.scale = scale;
         this.rotation = rotation;
+        this.sceneID = Session.getConnectedSceneID();
     }
 }
 
@@ -138,8 +144,11 @@ public class SceneEditor
         try{
             SceneUpdateMessage sceneUpdateMessage = JsonUtility.FromJson<SceneUpdateMessage>(message);
 
-            if(sceneUpdateMessage.action == "added")        // If new shape -> add to toAdd list 
+            if(sceneUpdateMessage.action == "added")            // New shape -> add to toAdd list 
                 shapesToAddList.Add(new Shape(sceneUpdateMessage));
+            
+            else if(sceneUpdateMessage.action == "updated")     // Updated shape -> update client data
+                updateShape(sceneUpdateMessage);
 
         }catch(Exception e){
             Debug.Log(e);
@@ -159,10 +168,16 @@ public class SceneEditor
     } 
 
     public static void handlUpdateShapeResponse(string response){
-        Debug.Log(response);
+        // TODO si se recibe un mensaje de error devolver a su estado anterior la modificación 
     }
 
-
+    /*
+        Update Shape Message (Broadcast)
+    */
+    private static void updateShape(SceneUpdateMessage updateMessage){
+        // Update shapesList data
+        // Update scene
+    }
 
 
     private static void addShape(Shape shape){
@@ -173,7 +188,9 @@ public class SceneEditor
 
         if(newObject != null){                              // Set parent and position
             newObject.transform.SetParent(shapesContainer.transform);            
-            newObject.transform.localPosition = new Vector3(shape.x, shape.y, shape.z);    
+            newObject.transform.localPosition = shape.getPosition();    
+            newObject.transform.localScale = shape.getScale();
+            newObject.transform.eulerAngles = shape.getRotation();
         }
 
     }
@@ -227,7 +244,7 @@ public class SceneEditor
 
                 if(info[i] == '}' && elementDetected){  
                     ShapeInfo shape = JsonUtility.FromJson<ShapeInfo>(element);
-                    shapesToAddList.Add(new Shape(shape.id, shape.kind, shape.x, shape.y, shape.z));
+                    shapesToAddList.Add(new Shape(shape.id, shape.kind, shape.x, shape.y, shape.z, shape.sx, shape.sy, shape.sz, shape.rx, shape.ry, shape.rz));
 
                     elementDetected = false;
                     element = "";
