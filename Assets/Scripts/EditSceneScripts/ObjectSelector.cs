@@ -16,7 +16,6 @@ public class ObjectSelector : ScriptableObject
     static GameObject pointerObject;                                    // GameObject used as pointer
     static GameObject pointersContainer;                                // Container for selected object pointers, has same position and rotation as selectedObject
     static List<Vector3> pointersPositionList = new List<Vector3>();    // Selected object pointers positions list
-    
 
 
     public static void Start()
@@ -41,9 +40,10 @@ public class ObjectSelector : ScriptableObject
             
                 if(!raycastHit.collider.name.Contains("Pointer")){          // Object selected
                     
-                    selectedObject = raycastHit.collider.gameObject;                // Update selected object
-                    pointersContainer.SetActive(true);                              // Show pointers
-                    SelectedShapeInfoCanvas.setSelectedObject(selectedObject);      // Show selected shape info panel
+                    selectedObject = raycastHit.collider.gameObject;                        // Update selected object
+                    pointersContainer.SetActive(true);                                      // Show pointers
+                    string id = SceneEditor.getShapeId(selectedObject);                     // id of the selected object
+                    SelectedShapeInfoCanvas.enable(selectedObject, id);                     // Show selected shape info panel
 
                     if(pointersContainer.transform.childCount == 0)                     // Create pointers if not created
                         createPointers();

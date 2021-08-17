@@ -21,20 +21,34 @@ public class AddShapeRequestData{
 
 [Serializable]
 public class SceneUpdateMessage{
-    public string action, shape;
+    public string action, id, shape;
     public float x, y, z;
 }
 
 [Serializable]
 public class ShapeInfo{
-    public string kind;
+    public string id, kind;
     public float x, y, z;
+}
+
+[Serializable]
+public class UpdateShapeRequest{
+    public string shapeID;
+    public Vector3 position, scale, rotation;
+
+    public UpdateShapeRequest(string shapeID, Vector3 position, Vector3 scale, Vector3 rotation){
+        this.shapeID = shapeID;
+        this.position = position;
+        this.scale = scale;
+        this.rotation = rotation;
+    }
 }
 
 
 public class SceneEditor
 {
     public static GameObject shapesContainer;       // Stores shapes in the scene   
+    public static List<Shape> shapesList;           // List of added shapes  
     public static List<Shape> shapesToAddList;      // List os shapes pending to add to the scene
 
     static bool placingShapeMode;                   // placingShapeMode enabled/disabled
@@ -50,9 +64,13 @@ public class SceneEditor
     {
         if(shapesContainer == null)
             shapesContainer = GameObject.Find("ShapesContainer");
+        
+        if(shapesList == null)
+            shapesList = new List<Shape>();
     
         if(shapesToAddList == null)
             shapesToAddList = new List<Shape>();
+
     
         if(shapesTemplateContainer == null)
             shapesTemplateContainer = GameObject.Find("ShapesTemplateContainer");
@@ -66,8 +84,10 @@ public class SceneEditor
     public static void Update()
     {
         if(shapesToAddList.Count > 0){              // If shapes pending to add -> add new shapes and clear the list
-            foreach(Shape shape in shapesToAddList)
-                addShape(shape);
+            foreach(Shape shape in shapesToAddList){
+                addShape(shape);        //  Create instance at the scene
+                shapesList.Add(shape);  //  Add to added list
+            }
 
             shapesToAddList.Clear();
         }
@@ -128,19 +148,18 @@ public class SceneEditor
     }
 
     /*
-        Modify Object Request
+        Update Shape Request
     */
-    public static void requestModifyObject(GameObject updatedObject){
+    public static void requestUpdateShape(GameObject updatedObject, string shapeID){
         Vector3 position = updatedObject.transform.position;
         Vector3 scale = updatedObject.transform.localScale;
         Vector3 rotation = updatedObject.transform.rotation.eulerAngles;
 
-        Debug.Log(position);
-    }
+        Client.sendData("updateShape", JsonUtility.ToJson( new UpdateShapeRequest(shapeID, position, scale, rotation)) );
+    } 
 
-    public static void handlModifyObjectResponse(string response){
+    public static void handlUpdateShapeResponse(string response){
         Debug.Log(response);
-
     }
 
 
@@ -208,7 +227,7 @@ public class SceneEditor
 
                 if(info[i] == '}' && elementDetected){  
                     ShapeInfo shape = JsonUtility.FromJson<ShapeInfo>(element);
-                    shapesToAddList.Add(new Shape(shape.kind, shape.x, shape.y, shape.z));
+                    shapesToAddList.Add(new Shape(shape.id, shape.kind, shape.x, shape.y, shape.z));
 
                     elementDetected = false;
                     element = "";
@@ -221,6 +240,15 @@ public class SceneEditor
         }
 
 
+    }
+
+    public static string getShapeId(GameObject gameObject){
+
+        foreach(var shape in shapesList)
+            if(shape.getPosition() == gameObject.transform.position)
+                return shape.id;
+
+        return null;
     }
 
     

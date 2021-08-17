@@ -82,7 +82,8 @@ public class SelectedShapeInfoCanvas : ScriptableObject
     private static Canvas canvas;
     private static bool enabled;
 
-    static GameObject selectedObject;    
+    static GameObject selectedShape;    
+    static string selectedShapeID;
 
     static Text shapeKind; 
 
@@ -118,7 +119,7 @@ public class SelectedShapeInfoCanvas : ScriptableObject
                 needUpdate = true;
         }
 
-        if(selectedObject != null){                 // Update selected object attributes
+        if(selectedShape != null){                 // Update selected object attributes
             // Position
             float x = attributes[0].getValue();
             float y = attributes[1].getValue();
@@ -134,39 +135,40 @@ public class SelectedShapeInfoCanvas : ScriptableObject
             float ry = attributes[7].getValue();
             float rz = attributes[8].getValue();
             
-            selectedObject.transform.position = new Vector3(x,y,z);
-            selectedObject.transform.localScale = new Vector3(sx, sy, sz);
-            selectedObject.transform.rotation = Quaternion.Euler(rx, ry, rz);
+            selectedShape.transform.position = new Vector3(x,y,z);
+            selectedShape.transform.localScale = new Vector3(sx, sy, sz);
+            selectedShape.transform.rotation = Quaternion.Euler(rx, ry, rz);
 
             ObjectSelector.updatePointers();        // Update pointers around the selected object
         }
         
-        if(needUpdate && selectedObject != null)    // If an attribute has changes -> notify the server
-            SceneEditor.requestModifyObject(selectedObject);
+        if(needUpdate && selectedShape != null)    // If an attribute has changes -> notify the server
+            SceneEditor.requestUpdateShape(selectedShape, selectedShapeID);
         
     }
   
 
-    public static void setSelectedObject(GameObject gameObject){
+    public static void enable(GameObject gameObject, string id){
         enabled = true;
-        selectedObject = gameObject;
+        selectedShape = gameObject;
+        selectedShapeID = id;
 
-        shapeKind.text = selectedObject.gameObject.name;        // Name field
+        shapeKind.text = selectedShape.gameObject.name;        // Name field
        
         // Position
-        attributes[0].setValue(selectedObject.transform.position.x);
-        attributes[1].setValue(selectedObject.transform.position.y);
-        attributes[2].setValue(selectedObject.transform.position.z);
+        attributes[0].setValue(selectedShape.transform.position.x);
+        attributes[1].setValue(selectedShape.transform.position.y);
+        attributes[2].setValue(selectedShape.transform.position.z);
 
         // Scale
-        attributes[3].setValue(selectedObject.transform.localScale.x);
-        attributes[4].setValue(selectedObject.transform.localScale.y);
-        attributes[5].setValue(selectedObject.transform.localScale.z);
+        attributes[3].setValue(selectedShape.transform.localScale.x);
+        attributes[4].setValue(selectedShape.transform.localScale.y);
+        attributes[5].setValue(selectedShape.transform.localScale.z);
 
         // Rotation
-        attributes[6].setValue(selectedObject.transform.rotation.eulerAngles.x);
-        attributes[7].setValue(selectedObject.transform.rotation.eulerAngles.y);
-        attributes[8].setValue(selectedObject.transform.rotation.eulerAngles.z);
+        attributes[6].setValue(selectedShape.transform.rotation.eulerAngles.x);
+        attributes[7].setValue(selectedShape.transform.rotation.eulerAngles.y);
+        attributes[8].setValue(selectedShape.transform.rotation.eulerAngles.z);
 
         foreach (var attributeCell in attributes)
             attributeCell.disableEditingMode();   
@@ -176,7 +178,7 @@ public class SelectedShapeInfoCanvas : ScriptableObject
 
     public static void disable(){
         enabled = false;
-        selectedObject = null;
+        selectedShape = null;
 
         InfoCanvas.setTipsText("");
     }
