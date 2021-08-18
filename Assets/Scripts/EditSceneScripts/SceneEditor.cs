@@ -51,11 +51,25 @@ public class UpdateShapeRequest{
 }
 
 
+public class ShapeData{
+    public Vector3 position, scale, rotation;
+
+    public ShapeData(Vector3 position, Vector3 scale, Vector3 rotation){
+        this.position = position;
+        this.scale = scale;
+        this.rotation = rotation;
+    }
+}
+
 public class SceneEditor
 {
     public static GameObject shapesContainer;       // Stores shapes in the scene   
     public static List<Shape> shapesList;           // List of added shapes  
     public static List<Shape> shapesToAddList;      // List os shapes pending to add to the scene
+
+    public static Dictionary<Shape, GameObject> shapes;
+    
+    public static Dictionary<GameObject, ShapeData> toUpdate;
 
     static bool placingShapeMode;                   // placingShapeMode enabled/disabled
     static string placingShapeKind;                 // shape kind 
@@ -77,6 +91,10 @@ public class SceneEditor
         if(shapesToAddList == null)
             shapesToAddList = new List<Shape>();
 
+        if(shapes == null)
+            shapes = new Dictionary<Shape, GameObject>();
+
+        toUpdate = new Dictionary<GameObject, ShapeData>();
     
         if(shapesTemplateContainer == null)
             shapesTemplateContainer = GameObject.Find("ShapesTemplateContainer");
@@ -91,13 +109,27 @@ public class SceneEditor
     {
         if(shapesToAddList.Count > 0){              // If shapes pending to add -> add new shapes and clear the list
             foreach(Shape shape in shapesToAddList){
-                addShape(shape);        //  Create instance at the scene
+                GameObject newObject = addShape(shape);        //  Create instance at the scene
                 shapesList.Add(shape);  //  Add to added list
+                shapes.Add(shape, newObject);
             }
 
             shapesToAddList.Clear();
         }
-            
+
+        if(toUpdate.Count > 0){
+
+            foreach(KeyValuePair<GameObject, ShapeData> iterator in toUpdate){
+                GameObject gameObject = iterator.Key;
+                ShapeData data = iterator.Value;
+
+                gameObject.transform.localPosition = data.position;
+                gameObject.transform.localScale = data.scale;
+                gameObject.transform.eulerAngles = data.rotation;
+            }
+
+            toUpdate.Clear();
+        }
 
         if(placingShapeMode){                       
             Vector3 forward = camera.transform.TransformPoint(Vector3.forward * placingShapeDistance);
@@ -175,12 +207,39 @@ public class SceneEditor
         Update Shape Message (Broadcast)
     */
     private static void updateShape(SceneUpdateMessage updateMessage){
+
         // Update shapesList data
+        // foreach(var shape in shapesList)
+        //     if(shape.id == updateMessage.id)
+        //        shape.updateData(updateMessage);
+
         // Update scene
+        foreach( KeyValuePair<Shape, GameObject> shape in shapes){
+            Shape key = shape.Key;
+            GameObject sceneObject = shape.Value;
+
+            if(key.id == updateMessage.id){
+                Debug.Log("found");
+                Vector3 position = new Vector3(updateMessage.x, updateMessage.y, updateMessage.z);
+                Vector3 scale = new Vector3(updateMessage.sx, updateMessage.sy, updateMessage.sz);
+                Vector3 rotation = new Vector3(updateMessage.rx, updateMessage.ry, updateMessage.rz);
+
+                toUpdate.Add(sceneObject, new ShapeData(position, scale, rotation));
+
+                // toDestroy.Add(sceneObject);
+                // shapes.Remove(key);
+                // key.updateData(updateMessage);
+
+
+                // shapesToAddList.Add(key);
+                
+                break;
+            }
+        }
     }
 
 
-    private static void addShape(Shape shape){
+    private static GameObject addShape(Shape shape){
         GameObject newObject = null;                        // Object to instantiate
 
         if(shape.shape == "Cube")
@@ -193,6 +252,7 @@ public class SceneEditor
             newObject.transform.eulerAngles = shape.getRotation();
         }
 
+        return newObject;
     }
 
 

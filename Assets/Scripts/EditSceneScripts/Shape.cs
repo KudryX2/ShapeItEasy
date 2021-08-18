@@ -9,21 +9,12 @@ public class Shape
                     sx, sy, sz, // Scale
                     rx, ry, rz; // Rotation
 
+
     public Shape(SceneUpdateMessage sceneUpdateMessage){
         this.id = sceneUpdateMessage.id;
         this.shape = sceneUpdateMessage.shape;
 
-        this.x = sceneUpdateMessage.x;
-        this.y = sceneUpdateMessage.y;
-        this.z = sceneUpdateMessage.z;
-    
-        this.sx = sceneUpdateMessage.sx;
-        this.sy = sceneUpdateMessage.sy;
-        this.sz = sceneUpdateMessage.sz;
-
-        this.rx = sceneUpdateMessage.rx;
-        this.ry = sceneUpdateMessage.ry;
-        this.rz = sceneUpdateMessage.rz;
+        updateData(sceneUpdateMessage);
     }
 
     public Shape(string id, string shape, float x, float y, float z, float sx, float sy, float sz, float rx, float ry, float rz){
@@ -41,6 +32,20 @@ public class Shape
         this.rx = rx;
         this.ry = ry;
         this.rz = rz;
+    }
+
+    public void updateData(SceneUpdateMessage sceneUpdateMessage){
+        this.x = sceneUpdateMessage.x;
+        this.y = sceneUpdateMessage.y;
+        this.z = sceneUpdateMessage.z;
+    
+        this.sx = sceneUpdateMessage.sx;
+        this.sy = sceneUpdateMessage.sy;
+        this.sz = sceneUpdateMessage.sz;
+
+        this.rx = sceneUpdateMessage.rx;
+        this.ry = sceneUpdateMessage.ry;
+        this.rz = sceneUpdateMessage.rz;
     }
 
     public Vector3 getPosition(){
