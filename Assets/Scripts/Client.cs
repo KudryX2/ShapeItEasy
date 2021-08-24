@@ -122,6 +122,9 @@ public class Client : ScriptableObject
             else if(receivedMessage.kind == "addShapeCallback")             
                 SceneEditor.handleAddShapeResponse(receivedMessage.content);
 
+            else if(receivedMessage.kind == "updateShapeCallback")
+                SceneEditor.handlUpdateShapeResponse(receivedMessage.content);
+
             /* 
                 Broadcasts
             */

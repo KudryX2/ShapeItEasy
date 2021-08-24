@@ -14,6 +14,7 @@ public class Manager : MonoBehaviour
         SceneEditor.Start();
         InfoCanvas.Start();
         SelectedShapeInfoCanvas.Start();
+        ObjectSelector.Start();
     }
 
     // Update is called once per frame
@@ -24,5 +25,6 @@ public class Manager : MonoBehaviour
         SceneEditor.Update();
         InfoCanvas.Update();
         SelectedShapeInfoCanvas.Update();
+        ObjectSelector.Update();
     }
 }

@@ -1,20 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class ObjectSelector : MonoBehaviour
+
+public class ObjectSelector : ScriptableObject
 {
-    RaycastHit raycastHit;                                      // RaycastHit, used to select game objects
+    static Transform transform;                                          
 
-    GameObject selectedObject = null;                           // Selected object
-    Vector3[] vertices;                                         // Selected object vertices list
+    static RaycastHit raycastHit;                                       // RaycastHit, used to select game objects
+
+    static GameObject selectedObject = null;                            // Selected object
+    static Vector3[] vertices;                                          // Selected object vertices list
     
-    GameObject pointerObject;                                   // GameObject used as pointer
-    GameObject pointersContainer;                               // Container for selected object pointers, has same position and rotation as selectedObject
-    List<Vector3> pointersPositionList = new List<Vector3>();   // Selected object pointers positions list
+    static GameObject pointerObject;                                    // GameObject used as pointer
+    static GameObject pointersContainer;                                // Container for selected object pointers, has same position and rotation as selectedObject
+    static List<Vector3> pointersPositionList = new List<Vector3>();    // Selected object pointers positions list
 
-    void Start()
+
+    public static void Start()
     {
+        transform = GameObject.Find("ObjectSelector").transform;
+
         pointersContainer = new GameObject("PointersContainer");            // Container for pointers
         pointersContainer.transform.SetParent(transform);   
 
@@ -26,16 +33,16 @@ public class ObjectSelector : MonoBehaviour
         pointerObject.SetActive(false);
     }
 
-    void Update()
-    {
-        if(Input.GetMouseButtonDown(0) && !SceneEditor.getPlacingShapesMode())
+    public static void Update(){
+
+        if(Input.GetMouseButtonDown(0) && !SceneEditor.getPlacingShapesMode() && !EventSystem.current.IsPointerOverGameObject())
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out raycastHit)){
             
                 if(!raycastHit.collider.name.Contains("Pointer")){          // Object selected
-                    
-                    selectedObject = raycastHit.collider.gameObject;                // Update selected object
-                    pointersContainer.SetActive(true);                              // Show pointers
-                    SelectedShapeInfoCanvas.setSelectedObject(selectedObject);      // Show selected shape info panel
+                    selectedObject = raycastHit.collider.gameObject;                        // Update selected object
+                    pointersContainer.SetActive(true);                                      // Show pointers
+                    string id = SceneEditor.getShapeId(selectedObject);                     // id of the selected object
+                    SelectedShapeInfoCanvas.enable(selectedObject, id);                     // Show selected shape info panel
 
                     if(pointersContainer.transform.childCount == 0)                     // Create pointers if not created
                         createPointers();
@@ -62,12 +69,13 @@ public class ObjectSelector : MonoBehaviour
         if(SceneEditor.getPlacingShapesMode()){     // If placingShapeMode -> disable object selection
             selectedObject = null;
             deletePointers();
+            SelectedShapeInfoCanvas.disable();                      // Hide selected shape info panel
         }
 
     }
 
 
-    void createPointers(){                                              // Instantiate new pointers for each vertex 
+    static void createPointers(){                                              // Instantiate new pointers for each vertex 
         vertices = selectedObject.GetComponent<MeshFilter>().mesh.vertices;         
 
         pointersContainer.transform.position = selectedObject.transform.position;   // Set position
@@ -93,7 +101,7 @@ public class ObjectSelector : MonoBehaviour
     }
 
 
-    void updatePointers(){                                              // Update pointers positions
+    public static void updatePointers(){                                              // Update pointers positions
         pointersContainer.transform.position = selectedObject.transform.position;   // Update position
         pointersContainer.transform.rotation = Quaternion.Euler(0,0,0);
 
@@ -103,7 +111,7 @@ public class ObjectSelector : MonoBehaviour
         pointersContainer.transform.rotation = selectedObject.transform.rotation;   // Update rotation
     }
 
-    void deletePointers(){                                              // Delete pointers and clear the pointer position list
+    static void deletePointers(){                                              // Delete pointers and clear the pointer position list
         pointersPositionList.Clear();
 
         foreach(Transform pointer in pointersContainer.transform)
