@@ -64,12 +64,10 @@ public class ShapeData{
 public class SceneEditor
 {
     public static GameObject shapesContainer;       // Stores shapes in the scene   
-    public static List<Shape> shapesList;           // List of added shapes  
-    public static List<Shape> shapesToAddList;      // List os shapes pending to add to the scene
 
-    public static Dictionary<Shape, GameObject> shapes;
-    
-    public static Dictionary<GameObject, ShapeData> toUpdate;
+    public static Dictionary<Shape, GameObject> shapes;         // Map of shapes 
+    public static List<Shape> shapesToAddList;                  // List of shapes pending to add to the scene
+    public static Dictionary<GameObject, ShapeData> toUpdate;   // Map of shapes pending to update to the scene
 
     static bool placingShapeMode;                   // placingShapeMode enabled/disabled
     static string placingShapeKind;                 // shape kind 
@@ -82,22 +80,14 @@ public class SceneEditor
 
     public static void Start()
     {
-        if(shapesContainer == null)
-            shapesContainer = GameObject.Find("ShapesContainer");
+        shapesContainer = GameObject.Find("ShapesContainer");
         
-        if(shapesList == null)
-            shapesList = new List<Shape>();
-    
-        if(shapesToAddList == null)
+        shapes = new Dictionary<Shape, GameObject>();
+        if(shapesToAddList == null)                 
             shapesToAddList = new List<Shape>();
-
-        if(shapes == null)
-            shapes = new Dictionary<Shape, GameObject>();
-
         toUpdate = new Dictionary<GameObject, ShapeData>();
     
-        if(shapesTemplateContainer == null)
-            shapesTemplateContainer = GameObject.Find("ShapesTemplateContainer");
+        shapesTemplateContainer = GameObject.Find("ShapesTemplateContainer");
 
         placingShapeMode = false;
 
@@ -110,22 +100,24 @@ public class SceneEditor
         if(shapesToAddList.Count > 0){              // If shapes pending to add -> add new shapes and clear the list
             foreach(Shape shape in shapesToAddList){
                 GameObject newObject = addShape(shape);        //  Create instance at the scene
-                shapesList.Add(shape);  //  Add to added list
                 shapes.Add(shape, newObject);
             }
 
             shapesToAddList.Clear();
         }
 
-        if(toUpdate.Count > 0){
+        if(toUpdate.Count > 0){                     // If shapes pending to update -> update data
 
             foreach(KeyValuePair<GameObject, ShapeData> iterator in toUpdate){
                 GameObject gameObject = iterator.Key;
-                ShapeData data = iterator.Value;
 
-                gameObject.transform.localPosition = data.position;
-                gameObject.transform.localScale = data.scale;
-                gameObject.transform.eulerAngles = data.rotation;
+                if(gameObject != null){
+                    ShapeData data = iterator.Value;
+
+                    gameObject.transform.localPosition = data.position;
+                    gameObject.transform.localScale = data.scale;
+                    gameObject.transform.eulerAngles = data.rotation;
+                }
             }
 
             toUpdate.Clear();
@@ -208,31 +200,17 @@ public class SceneEditor
     */
     private static void updateShape(SceneUpdateMessage updateMessage){
 
-        // Update shapesList data
-        // foreach(var shape in shapesList)
-        //     if(shape.id == updateMessage.id)
-        //        shape.updateData(updateMessage);
-
         // Update scene
         foreach( KeyValuePair<Shape, GameObject> shape in shapes){
             Shape key = shape.Key;
             GameObject sceneObject = shape.Value;
 
             if(key.id == updateMessage.id){
-                Debug.Log("found");
                 Vector3 position = new Vector3(updateMessage.x, updateMessage.y, updateMessage.z);
                 Vector3 scale = new Vector3(updateMessage.sx, updateMessage.sy, updateMessage.sz);
                 Vector3 rotation = new Vector3(updateMessage.rx, updateMessage.ry, updateMessage.rz);
 
                 toUpdate.Add(sceneObject, new ShapeData(position, scale, rotation));
-
-                // toDestroy.Add(sceneObject);
-                // shapes.Remove(key);
-                // key.updateData(updateMessage);
-
-
-                // shapesToAddList.Add(key);
-                
                 break;
             }
         }
@@ -283,9 +261,9 @@ public class SceneEditor
     public static void loadScene(string info){
 
         try{
+            Debug.Log("Loading the scene");
 
-            if(shapesToAddList == null)
-                shapesToAddList = new List<Shape>();
+            shapesToAddList = new List<Shape>();
 
             info = info.Replace("[", "");
             info = info.Replace("]", "");
@@ -321,9 +299,11 @@ public class SceneEditor
 
     public static string getShapeId(GameObject gameObject){
 
-        foreach(var shape in shapesList)
-            if(shape.getPosition() == gameObject.transform.position)
-                return shape.id;
+        foreach(KeyValuePair<Shape, GameObject> iterator in shapes)
+            if(iterator.Key.getPosition() == gameObject.transform.position){
+                Debug.Log("id " + iterator.Key.id);
+                return iterator.Key.id;
+            }
 
         return null;
     }
