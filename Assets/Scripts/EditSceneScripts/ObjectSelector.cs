@@ -39,7 +39,6 @@ public class ObjectSelector : ScriptableObject
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out raycastHit)){
             
                 if(!raycastHit.collider.name.Contains("Pointer")){          // Object selected
-                    
                     selectedObject = raycastHit.collider.gameObject;                        // Update selected object
                     pointersContainer.SetActive(true);                                      // Show pointers
                     string id = SceneEditor.getShapeId(selectedObject);                     // id of the selected object

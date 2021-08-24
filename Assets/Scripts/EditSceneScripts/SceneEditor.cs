@@ -127,7 +127,7 @@ public class SceneEditor
             Vector3 forward = camera.transform.TransformPoint(Vector3.forward * placingShapeDistance);
             placingShapeTemplateObject.transform.localPosition = forward;   // Update template object position
         
-            if(Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0)){    // ENTER KEY + placingShapeMode -> requestAddShape 
+            if(Input.GetKeyDown(KeyCode.Return)){                           // ENTER KEY + placingShapeMode -> requestAddShape 
                 requestAddShape(placingShapeKind, forward);                 // Request
                 disablePlacingShapeMode();
             }
@@ -246,7 +246,7 @@ public class SceneEditor
         if(placingShapeTemplateObject != null)              // Set parent
             placingShapeTemplateObject.transform.SetParent(shapesTemplateContainer.transform);   
 
-        InfoCanvas.setTipsText("ENTER or LEFT CLICK to add shape, ESCAPE to cancel, MOUSEWHEEL to change the distance");          
+        InfoCanvas.setTipsText("ENTER to add shape, ESCAPE to cancel, MOUSEWHEEL to change the distance");          
     }
 
     public static void disablePlacingShapeMode(){
@@ -300,10 +300,8 @@ public class SceneEditor
     public static string getShapeId(GameObject gameObject){
 
         foreach(KeyValuePair<Shape, GameObject> iterator in shapes)
-            if(iterator.Key.getPosition() == gameObject.transform.position){
-                Debug.Log("id " + iterator.Key.id);
+            if(iterator.Key.getPosition() == gameObject.transform.position)
                 return iterator.Key.id;
-            }
 
         return null;
     }
