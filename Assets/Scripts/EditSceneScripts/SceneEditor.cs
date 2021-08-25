@@ -61,6 +61,17 @@ public class ShapeData{
     }
 }
 
+public class ShapeRequest{
+    public string action, shapeID, sceneID;
+
+    public ShapeRequest(string action, string shapeID, string sceneID){     // Used to request delete
+        this.action = action;
+        this.shapeID = shapeID;
+        this.sceneID = sceneID;
+    }
+}
+
+
 public class SceneEditor
 {
     public static GameObject shapesContainer;       // Stores shapes in the scene   
@@ -68,6 +79,7 @@ public class SceneEditor
     public static Dictionary<Shape, GameObject> shapes;         // Map of shapes 
     public static List<Shape> shapesToAddList;                  // List of shapes pending to add to the scene
     public static Dictionary<GameObject, ShapeData> toUpdate;   // Map of shapes pending to update to the scene
+    public static List<GameObject> shapesToDestroy;             // List of shapes pending to destroy
 
     static bool placingShapeMode;                   // placingShapeMode enabled/disabled
     static string placingShapeKind;                 // shape kind 
@@ -86,6 +98,7 @@ public class SceneEditor
         if(shapesToAddList == null)                 
             shapesToAddList = new List<Shape>();
         toUpdate = new Dictionary<GameObject, ShapeData>();
+        shapesToDestroy = new List<GameObject>();
     
         shapesTemplateContainer = GameObject.Find("ShapesTemplateContainer");
 
@@ -97,7 +110,7 @@ public class SceneEditor
 
     public static void Update()
     {
-        if(shapesToAddList.Count > 0){              // If shapes pending to add -> add new shapes and clear the list
+        if(shapesToAddList.Count > 0){              // Shapes pending to add -> add new shapes and clear the list
             foreach(Shape shape in shapesToAddList){
                 GameObject newObject = addShape(shape);        //  Create instance at the scene
                 shapes.Add(shape, newObject);
@@ -106,7 +119,7 @@ public class SceneEditor
             shapesToAddList.Clear();
         }
 
-        if(toUpdate.Count > 0){                     // If shapes pending to update -> update data
+        if(toUpdate.Count > 0){                     // Shapes pending to update -> update data
 
             foreach(KeyValuePair<GameObject, ShapeData> iterator in toUpdate){
                 GameObject gameObject = iterator.Key;
@@ -121,6 +134,15 @@ public class SceneEditor
             }
 
             toUpdate.Clear();
+        }
+
+        if(shapesToDestroy.Count > 0){              // Shapes pending to destroy
+            foreach(GameObject gameObject in shapesToDestroy)
+                GameObject.Destroy(gameObject);
+
+            ObjectSelector.deletePointers();
+            SelectedShapeInfoCanvas.disable();
+            shapesToDestroy.Clear();
         }
 
         if(placingShapeMode){                       
@@ -148,7 +170,7 @@ public class SceneEditor
     /*
         Add Shape Request
     */
-    public static void requestAddShape(String shape, Vector3 position){
+    public static void requestAddShape(string shape, Vector3 position){
         AddShapeRequestData addShapeRequestData = new AddShapeRequestData(shape, position);
         Client.sendData("addShape", JsonUtility.ToJson(addShapeRequestData));
     }
@@ -159,6 +181,15 @@ public class SceneEditor
         else
             Debug.Log("Error añadiendo una figura");
     }
+
+    /*
+        Delete Shape Request
+    */
+    public static void requestDeleteShape(string shapeID){
+        ShapeRequest deleteRequest = new ShapeRequest("delete", shapeID, Session.getConnectedSceneID());
+        Client.sendData("deleteShape", JsonUtility.ToJson(deleteRequest));
+    }
+
 
     /*
         Update Scene Message
@@ -173,6 +204,9 @@ public class SceneEditor
             
             else if(sceneUpdateMessage.action == "updated")     // Updated shape -> update client data
                 updateShape(sceneUpdateMessage);
+
+            else if(sceneUpdateMessage.action == "deleted")     // Deleted shape -> update client data
+                deleteShape(sceneUpdateMessage);
 
         }catch(Exception e){
             Debug.Log(e);
@@ -215,6 +249,24 @@ public class SceneEditor
             }
         }
     }
+
+    /*
+        Delete Shape Message (Broadcast)
+    */
+    private static void deleteShape(SceneUpdateMessage updateMessage){
+
+        foreach( KeyValuePair<Shape, GameObject> shape in shapes){
+            Shape key = shape.Key;
+            GameObject sceneObject = shape.Value;
+
+            if(key.id == updateMessage.id){
+                shapesToDestroy.Add(sceneObject);
+                shapes.Remove(key);
+                break;
+            }
+        }
+    }
+
 
 
     private static GameObject addShape(Shape shape){

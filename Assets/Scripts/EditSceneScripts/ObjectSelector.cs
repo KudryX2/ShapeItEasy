@@ -101,17 +101,17 @@ public class ObjectSelector : ScriptableObject
     }
 
 
-    public static void updatePointers(){                                              // Update pointers positions
-        pointersContainer.transform.position = selectedObject.transform.position;   // Update position
+    public static void updatePointers(){                                            // Update pointers positions
+        pointersContainer.transform.position = selectedObject.transform.position;       // Update position
         pointersContainer.transform.rotation = Quaternion.Euler(0,0,0);
 
-        for( int i = 0 ; i < pointersContainer.transform.childCount ; ++i)          // Update pointers position
+        for( int i = 0 ; i < pointersContainer.transform.childCount ; ++i)              // Update pointers position
             pointersContainer.transform.GetChild(i).transform.position = Vector3.Scale(transform.TransformPoint(vertices[i]), selectedObject.transform.localScale) + pointersContainer.transform.position;
 
-        pointersContainer.transform.rotation = selectedObject.transform.rotation;   // Update rotation
+        pointersContainer.transform.rotation = selectedObject.transform.rotation;       // Update rotation
     }
 
-    static void deletePointers(){                                              // Delete pointers and clear the pointer position list
+    public static void deletePointers(){                                            // Delete pointers and clear the pointer position list
         pointersPositionList.Clear();
 
         foreach(Transform pointer in pointersContainer.transform)
