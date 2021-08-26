@@ -4,20 +4,20 @@ using UnityEngine;
 using System;
 
 
-[Serializable]
-public class AddShapeRequestData{
-    public string shape;
-    public float x, y, z;
-    public string sceneID;
+// [Serializable]
+// public class AddShapeRequestData{
+//     public string shape;
+//     public float x, y, z;
+//     public string sceneID;
 
-    public AddShapeRequestData(string shape, Vector3 position){
-        this.shape = shape;
-        this.x = position.x;
-        this.y = position.y;
-        this.z = position.z;
-        this.sceneID = Session.getConnectedSceneID();
-    }
-}
+//     public AddShapeRequestData(string shape, Vector3 position){
+//         this.shape = shape;
+//         this.x = position.x;
+//         this.y = position.y;
+//         this.z = position.z;
+//         this.sceneID = Session.getConnectedSceneID();
+//     }
+// }
 
 [Serializable]
 public class SceneUpdateMessage{
@@ -35,22 +35,6 @@ public class ShapeInfo{
                     rx, ry, rz;
 }
 
-[Serializable]
-public class UpdateShapeRequest{
-    public string shapeID;
-    public Vector3 position, scale, rotation;
-    public string sceneID;
-
-    public UpdateShapeRequest(string shapeID, Vector3 position, Vector3 scale, Vector3 rotation){
-        this.shapeID = shapeID;
-        this.position = position;
-        this.scale = scale;
-        this.rotation = rotation;
-        this.sceneID = Session.getConnectedSceneID();
-    }
-}
-
-
 public class ShapeData{
     public Vector3 position, scale, rotation;
 
@@ -61,6 +45,37 @@ public class ShapeData{
     }
 }
 
+
+public class UpdateShapeRequest{
+    public string action;       // addShape, updateShape, deleteShape
+    public string shapeID;
+    public string sceneID;
+    public string shape;
+    public Vector3 position, scale, rotation;
+
+    public UpdateShapeRequest(string shape, Vector3 position){                                     // Add Shape request
+        this.shape = shape;
+        this.position = position;
+        this.sceneID = Session.getConnectedSceneID();
+    }
+
+    public UpdateShapeRequest(string shapeID, Vector3 position, Vector3 scale, Vector3 rotation){   // Update request
+        this.shapeID = shapeID;
+        this.position = position;
+        this.scale = scale;
+        this.rotation = rotation;
+        this.sceneID = Session.getConnectedSceneID();
+    }
+
+    public UpdateShapeRequest(string action, string shapeID){                                       // Delete request
+        this.action = action;
+        this.shapeID = shapeID;
+        this.sceneID = Session.getConnectedSceneID();
+    }
+
+}
+
+
 public class SceneEditor
 {
     public static GameObject shapesContainer;       // Stores shapes in the scene   
@@ -68,6 +83,7 @@ public class SceneEditor
     public static Dictionary<Shape, GameObject> shapes;         // Map of shapes 
     public static List<Shape> shapesToAddList;                  // List of shapes pending to add to the scene
     public static Dictionary<GameObject, ShapeData> toUpdate;   // Map of shapes pending to update to the scene
+    public static List<GameObject> shapesToDestroy;             // List of shapes pending to destroy
 
     static bool placingShapeMode;                   // placingShapeMode enabled/disabled
     static string placingShapeKind;                 // shape kind 
@@ -86,6 +102,7 @@ public class SceneEditor
         if(shapesToAddList == null)                 
             shapesToAddList = new List<Shape>();
         toUpdate = new Dictionary<GameObject, ShapeData>();
+        shapesToDestroy = new List<GameObject>();
     
         shapesTemplateContainer = GameObject.Find("ShapesTemplateContainer");
 
@@ -97,7 +114,7 @@ public class SceneEditor
 
     public static void Update()
     {
-        if(shapesToAddList.Count > 0){              // If shapes pending to add -> add new shapes and clear the list
+        if(shapesToAddList.Count > 0){              // Shapes pending to add -> add new shapes and clear the list
             foreach(Shape shape in shapesToAddList){
                 GameObject newObject = addShape(shape);        //  Create instance at the scene
                 shapes.Add(shape, newObject);
@@ -106,7 +123,7 @@ public class SceneEditor
             shapesToAddList.Clear();
         }
 
-        if(toUpdate.Count > 0){                     // If shapes pending to update -> update data
+        if(toUpdate.Count > 0){                     // Shapes pending to update -> update data
 
             foreach(KeyValuePair<GameObject, ShapeData> iterator in toUpdate){
                 GameObject gameObject = iterator.Key;
@@ -121,6 +138,15 @@ public class SceneEditor
             }
 
             toUpdate.Clear();
+        }
+
+        if(shapesToDestroy.Count > 0){              // Shapes pending to destroy
+            foreach(GameObject gameObject in shapesToDestroy)
+                GameObject.Destroy(gameObject);
+
+            ObjectSelector.deletePointers();
+            SelectedShapeInfoCanvas.disable();
+            shapesToDestroy.Clear();
         }
 
         if(placingShapeMode){                       
@@ -148,9 +174,8 @@ public class SceneEditor
     /*
         Add Shape Request
     */
-    public static void requestAddShape(String shape, Vector3 position){
-        AddShapeRequestData addShapeRequestData = new AddShapeRequestData(shape, position);
-        Client.sendData("addShape", JsonUtility.ToJson(addShapeRequestData));
+    public static void requestAddShape(string shape, Vector3 position){
+        Client.sendData("addShape", JsonUtility.ToJson(new UpdateShapeRequest(shape, position)));
     }
 
     public static void handleAddShapeResponse(string response){
@@ -159,6 +184,14 @@ public class SceneEditor
         else
             Debug.Log("Error añadiendo una figura");
     }
+
+    /*
+        Delete Shape Request
+    */
+    public static void requestDeleteShape(string shapeID){
+        Client.sendData("deleteShape", JsonUtility.ToJson(new UpdateShapeRequest("delete", shapeID)));
+    }
+
 
     /*
         Update Scene Message
@@ -173,6 +206,9 @@ public class SceneEditor
             
             else if(sceneUpdateMessage.action == "updated")     // Updated shape -> update client data
                 updateShape(sceneUpdateMessage);
+
+            else if(sceneUpdateMessage.action == "deleted")     // Deleted shape -> update client data
+                deleteShape(sceneUpdateMessage);
 
         }catch(Exception e){
             Debug.Log(e);
@@ -216,6 +252,24 @@ public class SceneEditor
         }
     }
 
+    /*
+        Delete Shape Message (Broadcast)
+    */
+    private static void deleteShape(SceneUpdateMessage updateMessage){
+
+        foreach( KeyValuePair<Shape, GameObject> shape in shapes){
+            Shape key = shape.Key;
+            GameObject sceneObject = shape.Value;
+
+            if(key.id == updateMessage.id){
+                shapesToDestroy.Add(sceneObject);
+                shapes.Remove(key);
+                break;
+            }
+        }
+    }
+
+
 
     private static GameObject addShape(Shape shape){
         GameObject newObject = null;                        // Object to instantiate
@@ -246,7 +300,7 @@ public class SceneEditor
         if(placingShapeTemplateObject != null)              // Set parent
             placingShapeTemplateObject.transform.SetParent(shapesTemplateContainer.transform);   
 
-        InfoCanvas.setTipsText("ENTER to add shape, ESCAPE to cancel, MOUSEWHEEL to change the distance");          
+        InfoCanvas.setTipsText("ENTER to add shape, ESCAPE to cancel, MOUSEWHEEL to change the distance");  
     }
 
     public static void disablePlacingShapeMode(){

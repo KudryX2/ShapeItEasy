@@ -89,6 +89,8 @@ public class SelectedShapeInfoCanvas : ScriptableObject
 
     static List<AttributeCell> attributes;
 
+    static Button deleteShapeButton;
+
 
     public static void Start(){
         canvas = GameObject.Find("SelectedShapeInfoCanvas").GetComponent<Canvas>();
@@ -107,6 +109,9 @@ public class SelectedShapeInfoCanvas : ScriptableObject
         attributes.Add(new AttributeCell("RotationX", 1f));   // Rotation
         attributes.Add(new AttributeCell("RotationY", 1f));
         attributes.Add(new AttributeCell("RotationZ", 1f));
+
+        deleteShapeButton = GameObject.Find("DeleteShapeButton").GetComponent<Button>();
+        deleteShapeButton.onClick.AddListener(() => SceneEditor.requestDeleteShape(selectedShapeID) );
     }
 
     public static void Update(){
@@ -179,9 +184,7 @@ public class SelectedShapeInfoCanvas : ScriptableObject
     public static void disable(){
         enabled = false;
         selectedShape = null;
-
         InfoCanvas.setTipsText("");
     }
-
     
 }
