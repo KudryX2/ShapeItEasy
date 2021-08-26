@@ -31,6 +31,7 @@ public class InfoCanvas : ScriptableObject
     }
 
     public static void setTipsText(string text){
+        Debug.Log("__ " + text);
         tipsString = text;
         needUpdate = true;
     }

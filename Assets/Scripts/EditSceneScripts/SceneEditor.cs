@@ -4,20 +4,20 @@ using UnityEngine;
 using System;
 
 
-[Serializable]
-public class AddShapeRequestData{
-    public string shape;
-    public float x, y, z;
-    public string sceneID;
+// [Serializable]
+// public class AddShapeRequestData{
+//     public string shape;
+//     public float x, y, z;
+//     public string sceneID;
 
-    public AddShapeRequestData(string shape, Vector3 position){
-        this.shape = shape;
-        this.x = position.x;
-        this.y = position.y;
-        this.z = position.z;
-        this.sceneID = Session.getConnectedSceneID();
-    }
-}
+//     public AddShapeRequestData(string shape, Vector3 position){
+//         this.shape = shape;
+//         this.x = position.x;
+//         this.y = position.y;
+//         this.z = position.z;
+//         this.sceneID = Session.getConnectedSceneID();
+//     }
+// }
 
 [Serializable]
 public class SceneUpdateMessage{
@@ -35,22 +35,6 @@ public class ShapeInfo{
                     rx, ry, rz;
 }
 
-[Serializable]
-public class UpdateShapeRequest{
-    public string shapeID;
-    public Vector3 position, scale, rotation;
-    public string sceneID;
-
-    public UpdateShapeRequest(string shapeID, Vector3 position, Vector3 scale, Vector3 rotation){
-        this.shapeID = shapeID;
-        this.position = position;
-        this.scale = scale;
-        this.rotation = rotation;
-        this.sceneID = Session.getConnectedSceneID();
-    }
-}
-
-
 public class ShapeData{
     public Vector3 position, scale, rotation;
 
@@ -61,14 +45,34 @@ public class ShapeData{
     }
 }
 
-public class ShapeRequest{
-    public string action, shapeID, sceneID;
 
-    public ShapeRequest(string action, string shapeID, string sceneID){     // Used to request delete
+public class UpdateShapeRequest{
+    public string action;       // addShape, updateShape, deleteShape
+    public string shapeID;
+    public string sceneID;
+    public string shape;
+    public Vector3 position, scale, rotation;
+
+    public UpdateShapeRequest(string shape, Vector3 position){                                     // Add Shape request
+        this.shape = shape;
+        this.position = position;
+        this.sceneID = Session.getConnectedSceneID();
+    }
+
+    public UpdateShapeRequest(string shapeID, Vector3 position, Vector3 scale, Vector3 rotation){   // Update request
+        this.shapeID = shapeID;
+        this.position = position;
+        this.scale = scale;
+        this.rotation = rotation;
+        this.sceneID = Session.getConnectedSceneID();
+    }
+
+    public UpdateShapeRequest(string action, string shapeID){                                       // Delete request
         this.action = action;
         this.shapeID = shapeID;
-        this.sceneID = sceneID;
+        this.sceneID = Session.getConnectedSceneID();
     }
+
 }
 
 
@@ -171,8 +175,7 @@ public class SceneEditor
         Add Shape Request
     */
     public static void requestAddShape(string shape, Vector3 position){
-        AddShapeRequestData addShapeRequestData = new AddShapeRequestData(shape, position);
-        Client.sendData("addShape", JsonUtility.ToJson(addShapeRequestData));
+        Client.sendData("addShape", JsonUtility.ToJson(new UpdateShapeRequest(shape, position)));
     }
 
     public static void handleAddShapeResponse(string response){
@@ -186,8 +189,7 @@ public class SceneEditor
         Delete Shape Request
     */
     public static void requestDeleteShape(string shapeID){
-        ShapeRequest deleteRequest = new ShapeRequest("delete", shapeID, Session.getConnectedSceneID());
-        Client.sendData("deleteShape", JsonUtility.ToJson(deleteRequest));
+        Client.sendData("deleteShape", JsonUtility.ToJson(new UpdateShapeRequest("delete", shapeID)));
     }
 
 
@@ -298,7 +300,7 @@ public class SceneEditor
         if(placingShapeTemplateObject != null)              // Set parent
             placingShapeTemplateObject.transform.SetParent(shapesTemplateContainer.transform);   
 
-        InfoCanvas.setTipsText("ENTER to add shape, ESCAPE to cancel, MOUSEWHEEL to change the distance");          
+        InfoCanvas.setTipsText("ENTER to add shape, ESCAPE to cancel, MOUSEWHEEL to change the distance");  
     }
 
     public static void disablePlacingShapeMode(){

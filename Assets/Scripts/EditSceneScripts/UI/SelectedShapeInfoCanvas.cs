@@ -185,6 +185,8 @@ public class SelectedShapeInfoCanvas : ScriptableObject
         enabled = false;
         selectedShape = null;
 
+        Debug.Log("aqui");
+
         InfoCanvas.setTipsText("");
     }
 
