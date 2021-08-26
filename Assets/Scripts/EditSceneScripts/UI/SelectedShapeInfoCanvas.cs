@@ -184,15 +184,7 @@ public class SelectedShapeInfoCanvas : ScriptableObject
     public static void disable(){
         enabled = false;
         selectedShape = null;
-
-        Debug.Log("aqui");
-
         InfoCanvas.setTipsText("");
-    }
-
-
-    static void deleteSelectedShape(){
-
     }
     
 }

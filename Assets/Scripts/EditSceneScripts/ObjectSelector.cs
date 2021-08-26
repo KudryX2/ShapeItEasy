@@ -69,7 +69,6 @@ public class ObjectSelector : ScriptableObject
         if(SceneEditor.getPlacingShapesMode()){     // If placingShapeMode -> disable object selection
             selectedObject = null;
             deletePointers();
-            SelectedShapeInfoCanvas.disable();                      // Hide selected shape info panel
         }
 
     }
@@ -112,10 +111,13 @@ public class ObjectSelector : ScriptableObject
     }
 
     public static void deletePointers(){                                            // Delete pointers and clear the pointer position list
-        pointersPositionList.Clear();
+        if(pointersPositionList.Count > 0){
+            pointersPositionList.Clear();
 
-        foreach(Transform pointer in pointersContainer.transform)
-            Destroy(pointer.gameObject);
+            foreach(Transform pointer in pointersContainer.transform)
+                Destroy(pointer.gameObject);
+        }
+        
     }
 
 }
