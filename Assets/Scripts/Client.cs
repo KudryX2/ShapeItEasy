@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 using HybridWebSocket;
 
@@ -35,11 +36,35 @@ public class Client : ScriptableObject
 
     private static WebSocket webSocket;
 
+    private static bool handleConnectionInterrumpedEvent;
+
+
     public static void Start(){
 
         if(webSocket == null){
             createConnection();
         }
+    }
+
+    public static void Update(){
+
+        if(handleConnectionInterrumpedEvent){
+
+            handleConnectionInterrumpedEvent = false;
+
+            Cursor.lockState = CursorLockMode.None;                     // Show the cursor
+            Cursor.visible = true;                                     
+
+            if(SceneManager.GetActiveScene().name != "StartScene")      // Load Start Scene
+                SceneManager.LoadScene("StartScene", LoadSceneMode.Single);
+
+            Session.deleteSessionData();                                // Delete last session data
+
+            LogInCanvas.enable();                                       // Show Log In canvas
+            LogInCanvas.setNotificationText("Se ha interrumpido la conexión con el servidor, intentando reconectarse ...");
+            createConnection();                                         // Create new connection
+        }
+
     }
 
 
@@ -51,6 +76,7 @@ public class Client : ScriptableObject
 
             webSocket.OnOpen += () => {
                 Debug.Log("Conexión con el servidor establecida");
+                LogInCanvas.setNotificationText(" ");
             };
 
             webSocket.OnMessage += (byte[] data) => {
@@ -63,6 +89,7 @@ public class Client : ScriptableObject
 
             webSocket.OnClose += (WebSocketCloseCode code) =>{
                 Debug.Log("WebSocket cerrado : " + code.ToString());
+                handleConnectionInterrumpedEvent = true;
             };
         
             webSocket.Connect();
@@ -146,9 +173,7 @@ public class Client : ScriptableObject
             Debug.Log("No se ha podido enviar el mensaje " + exception.ToString());
         }
 
-    }
-
-    
+    }    
 
     
 }

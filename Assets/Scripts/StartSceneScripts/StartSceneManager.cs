@@ -30,6 +30,8 @@ public class StartSceneManager : MonoBehaviour
         LogInCanvas.Update();
         SignUpCanvas.Update();
 
+        Client.Update();
+
         ScenesListCanvas.Update();
         CreateSceneCanvas.Update();
         EditSceneCanvas.Update();
