@@ -137,6 +137,12 @@ public class Session : ScriptableObject
         }
     }
 
+
+    public static void deleteSessionData(){
+        userToken = "";
+        connectedSceneID = "";
+    }
+
     /*
         Getters
     */

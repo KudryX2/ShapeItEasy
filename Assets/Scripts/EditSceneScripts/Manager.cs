@@ -26,5 +26,7 @@ public class Manager : MonoBehaviour
         InfoCanvas.Update();
         SelectedShapeInfoCanvas.Update();
         ObjectSelector.Update();
+
+        Client.Update();
     }
 }
