@@ -100,6 +100,7 @@ public class ScenesListCanvas : ScriptableObject
         EditSceneCanvas.disable();
         ShareSceneCanvas.disable();
         AddSceneCanvas.disable();
+        DeleteSceneConfirmationCanvas.disable();
     }
 
     public static void disable(){       // Hide

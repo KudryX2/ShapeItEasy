@@ -30,7 +30,7 @@ public class EditSceneCanvas : ScriptableObject
         cancelEditingButton.onClick.AddListener(() => ScenesListCanvas.enable() );
 
         deleteButton = GameObject.Find("DeleteSceneButton").GetComponent<Button>();
-        deleteButton.onClick.AddListener(() => Scenes.requestDeleteScene() );
+        deleteButton.onClick.AddListener(() => DeleteSceneConfirmationCanvas.enable() );
 
         /*  
             Input Fields 
