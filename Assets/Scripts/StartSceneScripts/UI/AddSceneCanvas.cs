@@ -44,7 +44,7 @@ public class AddSceneCanvas : ScriptableObject
         }
     }
 
-    public static void showNotification(string notification){
+    public static void setNotificationText(string notification){
         errorNotification = notification;
         showErrorNotification = true;
     }
