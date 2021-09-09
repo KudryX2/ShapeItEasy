@@ -73,8 +73,7 @@ public class Scenes
         if(name != "")
             Client.sendData("requestCreateScene",  JsonUtility.ToJson( new Scene(name, description)));
         else
-            Debug.Log("El nombre de la escena no puede estar vacío");
-
+            CreateSceneCanvas.setNotificationText("Scene name field can´t be empty");
     }
 
     public static void requestEditScene(){

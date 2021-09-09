@@ -17,6 +17,9 @@ public class CreateSceneCanvas : ScriptableObject
     private static InputField nameInputField, descriptionInputField;
     private static bool clearInputFields;
 
+    static Text notificationTextComponent;
+    static string notificationText = "";
+
 
     public static void Start()
     {
@@ -37,6 +40,9 @@ public class CreateSceneCanvas : ScriptableObject
         nameInputField = GameObject.Find("CreateSceneNameField").GetComponent<InputField>();
         descriptionInputField = GameObject.Find("CreateSceneDescriptionField").GetComponent<InputField>();
 
+
+        notificationTextComponent = GameObject.Find("CreateSceneNotification").GetComponent<Text>();
+        notificationTextComponent.text = "";
     }
 
     public static void Update()
@@ -47,6 +53,11 @@ public class CreateSceneCanvas : ScriptableObject
             nameInputField.text = "";
             descriptionInputField.text = "";
             clearInputFields = false;
+        }
+
+        if(notificationText != ""){
+            notificationTextComponent.text = notificationText;
+            notificationText = "";
         }
     }
 
@@ -67,6 +78,10 @@ public class CreateSceneCanvas : ScriptableObject
         clearInputFields = true;
     }
 
+
+    public static void setNotificationText(string text){
+        notificationText = text;        // We use the same variable to store the text to update and the need of action
+    }
 
     public static string getNameInput(){
         return nameInputField.text;
