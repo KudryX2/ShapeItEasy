@@ -70,9 +70,10 @@ public class Scenes
         string name = CreateSceneCanvas.getNameInput();
         string description = CreateSceneCanvas.getDescriptionInput();
 
-        if(name != "")
+        if(name != ""){
+            CreateSceneCanvas.setNotificationText("Loading ...");
             Client.sendData("requestCreateScene",  JsonUtility.ToJson( new Scene(name, description)));
-        else
+        }else
             CreateSceneCanvas.setNotificationText("Scene name field can´t be empty");
     }
 
@@ -206,9 +207,9 @@ public class Scenes
     public static void requestAddScene(string inputId){
 
         if(String.Compare(inputId, "") == 0)          // Before sending the request check if input is not empty
-            AddSceneCanvas.showNotification("El campo es obligatorio");
+            AddSceneCanvas.setNotificationText("The share ID field can´t be empty");
         else{
-            AddSceneCanvas.showNotification("Loading ...");
+            AddSceneCanvas.setNotificationText("Loading ...");
             Client.sendData("requestAddScene", inputId);  
         }
     }
@@ -219,7 +220,7 @@ public class Scenes
             requestScenesList();
             ScenesListCanvas.enable();
         }else                               
-            AddSceneCanvas.showNotification(response);
+            AddSceneCanvas.setNotificationText(response);
         
     }
 
