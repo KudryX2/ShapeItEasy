@@ -15,6 +15,8 @@ public class EditSceneCanvas : ScriptableObject
     static InputField nameInputField, descriptionInputField;
     static bool clearInputFields;
 
+    static Text notificationText;
+
 
     public static void Start()
     {
@@ -24,7 +26,7 @@ public class EditSceneCanvas : ScriptableObject
             Buttons
         */
         saveButton = GameObject.Find("SaveButton").GetComponent<Button>();
-        saveButton.onClick.AddListener(() => Scenes.requestEditScene() );
+        saveButton.onClick.AddListener(() => saveButtonAction() );
 
         cancelEditingButton = GameObject.Find("EditSceneCancelButton").GetComponent<Button>();
         cancelEditingButton.onClick.AddListener(() => ScenesListCanvas.enable() );
@@ -38,6 +40,11 @@ public class EditSceneCanvas : ScriptableObject
         nameInputField = GameObject.Find("EditSceneNameField").GetComponent<InputField>();
         descriptionInputField = GameObject.Find("EditSceneDescriptionField").GetComponent<InputField>();
 
+        /*
+            Notification
+        */
+        notificationText = GameObject.Find("EditSceneNotification").GetComponent<Text>();
+        notificationText.text = "";
     }
 
 
@@ -64,6 +71,15 @@ public class EditSceneCanvas : ScriptableObject
         clearInputFields = true;
     }
 
+
+    private static void saveButtonAction(){
+
+        if(nameInputField.text != "")
+            Scenes.requestEditScene();
+        else 
+            notificationText.text = "Scene name field can´t be empty";
+
+    }
 
     public static string getNameInput(){
         return nameInputField.text;
