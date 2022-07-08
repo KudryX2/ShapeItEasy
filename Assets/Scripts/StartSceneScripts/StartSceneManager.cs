@@ -5,39 +5,56 @@ using UnityEngine;
 public class StartSceneManager : MonoBehaviour
 {
 
+    public const bool TESTING = true;
+
     public GameObject sceneListItem;
 
     void Start()
     {
-        LogInCanvas.Start();
-        SignUpCanvas.Start();
 
-        Client.Start();
-        Session.Start();
+        if(TESTING){
+            RequestLoadTest.Start();
+            PingTest.Start();
 
-        ScenesListCanvas.Start(sceneListItem);
-        CreateSceneCanvas.Start();
-        EditSceneCanvas.Start();
-        DeleteSceneConfirmationCanvas.Start(); 
-        ShareSceneCanvas.Start();
-        AddSceneCanvas.Start();
+        }else{
+            LogInCanvas.Start();
+            SignUpCanvas.Start();
+
+            Client.Start();
+            Session.Start();
+
+            ScenesListCanvas.Start(sceneListItem);
+            CreateSceneCanvas.Start();
+            EditSceneCanvas.Start();
+            DeleteSceneConfirmationCanvas.Start(); 
+            ShareSceneCanvas.Start();
+            AddSceneCanvas.Start();
+        }
+
     }
 
 
     void Update()
     {
-        Scenes.Update();
 
-        LogInCanvas.Update();
-        SignUpCanvas.Update();
+        if(TESTING){
 
-        Client.Update();
 
-        ScenesListCanvas.Update();
-        CreateSceneCanvas.Update();
-        EditSceneCanvas.Update();
-        DeleteSceneConfirmationCanvas.Update();
-        ShareSceneCanvas.Update();
-        AddSceneCanvas.Update();
+        }else{
+            Scenes.Update();
+
+            LogInCanvas.Update();
+            SignUpCanvas.Update();
+
+            Client.Update();
+
+            ScenesListCanvas.Update();
+            CreateSceneCanvas.Update();
+            EditSceneCanvas.Update();
+            DeleteSceneConfirmationCanvas.Update();
+            ShareSceneCanvas.Update();
+            AddSceneCanvas.Update();
+        }
+
     }
 }
