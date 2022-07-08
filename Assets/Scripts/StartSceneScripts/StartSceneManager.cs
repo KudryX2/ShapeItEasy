@@ -14,6 +14,7 @@ public class StartSceneManager : MonoBehaviour
 
         if(TESTING){
             RequestLoadTest.Start();
+            PingTest.Start();
 
         }else{
             LogInCanvas.Start();

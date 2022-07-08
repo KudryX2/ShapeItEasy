@@ -13,13 +13,16 @@ using System.Threading;
 
 public class RequestLoadTest : ScriptableObject {
 
-    private static string IP = "192.168.1.165";       // Server IP
+    private static string IP = "172.20.67.163";       // Server IP
     private static int PORT = 2323;                  // Server Port
-
 
     private static string SCENE_ID = "337b9807-d9ad-43b9-8343-f9d19ef69322";
     private static string SHAPE_ID = "26c3cccd-4eb9-42df-adc2-fcf0a2a140f5";
     private static int USERS_AMOUNT = 100;
+    private static int REQUESTS_AMOUNT = 100;
+
+    private static int MILLS_MIN_WAIT = 0;
+    private static int MILLS_MAX_WAIT = 100;
 
     private static List<WebSocket> connections = new List<WebSocket>();
 
@@ -53,8 +56,6 @@ public class RequestLoadTest : ScriptableObject {
                         Thread thread = new Thread(() => testRequests(webSocket, receivedMessage.content));
                         thread.Start();
                     }
-                    // else
-                    //     Debug.Log("Mensaje : " + receivedMessage.content);
 
                 };
 
@@ -88,8 +89,9 @@ public class RequestLoadTest : ScriptableObject {
         sendMessage(webSocket, new Request("requestConnect", token, SCENE_ID));
         waitRandom();
 
-        for(int i = 0 ; i < 100 ; ++i){
-            sendMessage(webSocket, new Request("updateShape", token,  JsonUtility.ToJson( new UpdateShapeRequest(SHAPE_ID, new Vector3(0,0,0), new Vector3(1,1,1), new Vector3(0,0,0)))));
+        for(int i = 0 ; i < REQUESTS_AMOUNT ; ++i){
+            sendMessage(webSocket, new Request("updateShape", token,
+              JsonUtility.ToJson( new UpdateShapeRequest(SHAPE_ID, new Vector3(0,0,0), new Vector3(1,1,1), new Vector3(0,0,0)))));
             waitRandom();
         }
 
@@ -101,7 +103,6 @@ public class RequestLoadTest : ScriptableObject {
     }
 
     public static void sendMessage(WebSocket webSocket, Request request){
-
         try{
             webSocket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(request)));
         }catch(Exception exception){
@@ -111,7 +112,7 @@ public class RequestLoadTest : ScriptableObject {
 
     public static void waitRandom(){
         System.Random random = new System.Random();
-        Thread.Sleep(random.Next(500, 5000));
+        Thread.Sleep(random.Next(MILLS_MIN_WAIT, MILLS_MAX_WAIT));
     }
 
 }
