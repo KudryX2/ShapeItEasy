@@ -5,7 +5,7 @@ using UnityEngine;
 public class StartSceneManager : MonoBehaviour
 {
 
-    public const bool TESTING = true;
+    public const bool TESTING = false;
 
     public GameObject sceneListItem;
 
